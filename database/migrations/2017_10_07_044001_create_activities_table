@@ -1,0 +1,56 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateActivitiesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('activities', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->string('title');
+            $table->string('nature');
+            $table->date('date');
+            $table->date('endDate');
+            $table->string('venue');
+            $table->string('participants');
+            $table->integer('expectedAttendees');
+            $table->boolean('optionsSpeakersGuest');
+            $table->string('speakersGuest');
+            $table->boolean('suspension');
+            $table->string('personInCharge')->nullable();
+            $table->text('budgetDescription')->nullable();
+            $table->double('budgetCost')->nullable();
+            $table->double('buggetTotal')->nullable();
+            $table->string('sourceOfFund')->nullable();
+            $table->text('equipmentRequest')->nullable();
+            $table->string('venueEquipmentApproval')->nullable();
+            $table->string('officeUnit')->nullable();
+            $table->string('requestedBy')->nullable();
+            $table->string('noted')->nullable();
+            $table->boolean('approval1');
+            $table->boolean('approval2');
+            $table->boolean('approval3');
+            $table->integer('organization_ay_id')->unsigned()->nullable();
+            $table->foreign('organization_ay_id')->references('id')->on('organization_academic_years');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('activities');
+    }
+}

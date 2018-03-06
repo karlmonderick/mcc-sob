@@ -1,0 +1,2 @@
+[14-Feb-2018 16:03:36 UTC] PHP Fatal error:  Class 'sob\App\Http\Controllers\Controller' not found in /home/teamsob/sob/app/Http/Controllers/Auth/LoginController.php on line 8
+[20-Feb-2018 06:21:48 UTC] PHP Fatal error:  Cannot use Illuminate\Http\Request as Request because the name is already in use in /home/teamsob/sob/app/Http/Controllers/AcademicYearController.php on line 6

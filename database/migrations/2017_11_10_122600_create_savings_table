@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateSavingsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('savings', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->double('savings');
+            $table->double('remaining');
+            $table->string('semester');
+            $table->integer('organization_ay_id')->unsigned()->nullable();
+            $table->foreign('organization_ay_id')->references('id')->on('organization_academic_years');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('savings');
+    }
+}
