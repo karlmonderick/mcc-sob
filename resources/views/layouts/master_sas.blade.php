@@ -5,9 +5,9 @@
         $count_notifications = $count_organizationssss + $count_notificationss;
     ?>
     <li class="xn-icon-button pull-right">
-        <a href="#"><span class="glyphicon glyphicon-globe"></span></a>
+        <!-- <a href="#"><span class="glyphicon glyphicon-globe"></span></a> -->
         @if($count_notifications >= 1)
-            <div class="informer informer-warning">{{$count_notifications}}</div>
+            <!-- <div class="informer informer-warning">{{$count_notifications}}</div> -->
         @endif
 
         <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging">

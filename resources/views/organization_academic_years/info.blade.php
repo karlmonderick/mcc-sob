@@ -29,7 +29,9 @@
                     <a href="#activities" data-toggle="tab" class="list-group-item" ><span class="fa fa-bar-chart-o"></span> Activities</a>
                     <a href="#officers" data-toggle="tab" class="list-group-item"><span class="fa fa-users"></span> Officers <span class="badge badge-default">{{$officers->count()}}</span></a>                                
                     <a href="#reports" data-toggle="tab" class="list-group-item"><span class="fa fa-info"></span> Reports</a>
+                @if($auth->role_id == 4)
                     <a href="#settings" data-toggle="tab" class="list-group-item"><span class="fa fa-cog"></span> Settings</a>
+                @endif
                 </div>
                 <!-- <div class="panel-body">
                     <h4 class="text-title">Friends</h4>

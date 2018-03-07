@@ -35,6 +35,10 @@ Route::middleware(['auth'])->group( function(){
     Route::resource('reports', 'ReportsController');
     Route::resource('calendar_of_activities', 'CalendarActivitiesController');
     Route::resource('liquidations', 'LiquidationController');
+
+    
+    Route::resource('enrolled_students', 'EnrolledStudentsController');
+
     Route::post('/toggle-notify','NotificationController@add_content');
     Route::post('/toggle-notifications','NotificationController@notifications');
     Route::post('/toogle-organization-notifications', 'NotificationController@org_notify');
@@ -68,6 +72,7 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/toggle2-approve','LiquidationController@approval');
     Route::post('/toggle2-disapprove','LiquidationController@disapproval');
     Route::post('/toggle2-notify','NotificationController@add_content2');
+
 
     Route::post('upload', 'LiquidationController@upload');
     Route::post('upload_image', 'UserController@upload_image');

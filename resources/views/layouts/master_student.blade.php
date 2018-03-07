@@ -11,10 +11,10 @@
     ?>
 
     <li class="xn-icon-button pull-right">
-        <a href="#"><span class="glyphicon glyphicon-globe"></span></a>
+        <!-- <a href="#"><span class="glyphicon glyphicon-globe"></span></a> -->
 
         @if($cr_ca >= 1)
-            <div class="informer informer-warning">{{$cr_ca}}</div>
+            <!-- <div class="informer informer-warning">{{$cr_ca}}</div> -->
         @endif
 
         <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging">

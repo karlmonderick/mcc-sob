@@ -55,8 +55,7 @@
                                                 echo "SAS DIRECTOR";
                                                 break;
                                             case 4:
-                                                echo "{
-                                                    $user_org->position}";
+                                                echo "<b>$user_org->position</b>";
                                                 break;
                                             case 5:
                                             echo "ADMIN";
@@ -84,7 +83,7 @@
                         @if(Auth::user()->role_id == 3)
                             <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><em class="fa fa-user"></em> <span class="xn-text">Users</span> <span class="sr-only"></span></a></li>
                         @endif
-                        @if($auth->role_id==1 OR $auth->role_id==3)
+                        @if($auth->role_id==3)
                             <li class="nav-item"><a class="nav-link" href="{{ route('institutes.index') }}"><em class="fa fa-building"></em> <span class="xn-text">Institutes</span>  <span class="sr-only"></span></a></li>
                         @endif   
                         @if(Auth::user()->role_id == 1)

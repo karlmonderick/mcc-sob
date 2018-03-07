@@ -103,11 +103,11 @@
 												<td>{{$budgets->fund_name}}</td>
 												@if($auth->role_id == 1)
 												<td>
-													<form action="{{route('budgets.destroy', $budgets->id)}}" method="POST">      
+													<form action="" method="POST">      
 														<input type="hidden" name="_method" value="delete">
 														<input type="hidden" name="_token" value="{{ csrf_token() }}"> 
 														@if(Auth::user()->role_id == 1)
-														<a href="{{route('budgets.edit', $budgets->id)}}" class="btn btn-xs btn-warning">Update</a>
+														<a href="{{route('budget.edit', $budgets->id)}}" class="btn btn-xs btn-warning">Update</a>
 														<!--<input type="submit" class="btn btn-xs" onclick="return confirm('Are you sure?')" value="delete">-->
 														@endif
 													</form>
@@ -141,11 +141,11 @@
 												<td>{{$budgets->fund_name}}</td>
 												@if($auth->role_id == 1)
 												<td>
-													<form action="{{route('budgets.destroy', $budgets->id)}}" method="POST">      
+													<form action="" method="POST">      
 														<input type="hidden" name="_method" value="delete">
 														<input type="hidden" name="_token" value="{{ csrf_token() }}"> 
 														@if(Auth::user()->role_id == 1)
-														<a href="{{route('budgets.edit', $budgets->id)}}" class="btn btn-xs btn-warning">Update</a>
+														<a href="{{route('budget.edit', $budgets->id)}}" class="btn btn-xs btn-warning">Update</a>
 														<!--<input type="submit" class="btn btn-xs" onclick="return confirm('Are you sure?')" value="delete">-->
 														@endif
 													</form>

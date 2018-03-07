@@ -5,15 +5,14 @@
     $cr2 = $count_req2 + $count_appr + $count_liquidations_2;
     ?>
     <li class="xn-icon-button pull-right">
-        <a href="#"><span class="glyphicon glyphicon-globe"></span></a>
+        <!-- <a href="#"><span class="glyphicon glyphicon-globe"></span></a> -->
         @if($cr2 >= 1)
-        <div class="informer informer-warning">{{$cr2}}</div>
+        <!-- <div class="informer informer-warning">{{$cr2}}</div> -->
         @endif
         
         <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging">
             <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-tasks"></span> Notifications</h3>                                
-                
+                <h3 class="panel-title"><span class="fa fa-tasks"></span> Notifications</h3>
             </div>
             <div class="panel-body list-group list-group-contacts scroll" style="height: 400px;"> 
             
