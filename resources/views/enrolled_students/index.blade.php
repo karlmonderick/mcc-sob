@@ -35,6 +35,7 @@
 							<li class="list-group-item">2nd Semester:<span class="badge badge-info"> </span></li>
 						</ul>       
 						<button type="button" class="btn btn-success btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add No. of Enrollees</button>                         
+						<a href="{{ route('enrolled_students.create') }}" class="btn btn-success btn-sm btn-block" >Add No. of Enrollees</a>                         
 					</div>
 				</div>
 				<hr>
@@ -125,7 +126,7 @@
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog">
 
 		<!-- Modal content-->
 		<div class="modal-content">
@@ -139,8 +140,8 @@
 				<div class="modal-body">
 					<div class="form-group">
 						<strong>Select .csv file to upload</strong>
-						<input type="file" name="upload_file" id="upload_file" required>
-								
+						<!-- <input type="file" name="upload_file" id="upload_file" required> -->
+						<input type="file" multiple id="file-simple" name="upload_file"/>		
 						<input type="hidden" value="{{ csrf_token() }}" name="_token">
 					</div>
 				</div>
@@ -153,4 +154,31 @@
 	</div>
 </div>
 
+
+<script type="text/javascript" src="/js/plugins/fileinput/fileinput.min.js"></script>        
+<script type="text/javascript" src="/js/plugins/filetree/jqueryFileTree.js"></script>
+
+<script>
+	$(function(){
+		$("#file-simple").fileinput({
+				showUpload: false,
+				showCaption: false,
+				browseClass: "btn btn-danger",
+				fileType: "any"
+		});            
+		$("#filetree").fileTree({
+			root: '/',
+			script: 'assets/filetree/jqueryFileTree.php',
+			expandSpeed: 100,
+			collapseSpeed: 100,
+			multiFolder: false                    
+		}, function(file) {
+			alert(file);
+		}, function(dir){
+			setTimeout(function(){
+				page_content_onresize();
+			},200);                    
+		});                
+	});            
+</script>
 @endsection

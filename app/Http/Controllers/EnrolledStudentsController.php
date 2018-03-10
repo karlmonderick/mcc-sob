@@ -24,7 +24,7 @@ class EnrolledStudentsController extends Controller
     
     public function create()
     {
-        //
+        return view('enrolled_students.upload');
     }
 
     public function store(Request $request)

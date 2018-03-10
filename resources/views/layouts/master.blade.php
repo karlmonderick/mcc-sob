@@ -27,7 +27,7 @@
                     <!-- START X-NAVIGATION -->
                     <ul class="x-navigation">
                         <li class="xn-logo">
-                            <a href="{{ route('home') }}"><image src="../../img/mcc_logo@2x.png"></a>
+                            <a href="{{ route('home') }}">SOB</a>
                             <a href="#" class="x-navigation-control"></a>
                         </li>
                         <li class="xn-profile">
@@ -192,6 +192,10 @@
         <script type="text/javascript" src="/js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="/js/plugins/knob/jquery.knob.min.js"></script>
        
+
+        <script type="text/javascript" src="/js/plugins/fileinput/fileinput.min.js"></script>        
+        <script type="text/javascript" src="/js/plugins/filetree/jqueryFileTree.js"></script>
+
         <!-- END THIS PAGE PLUGINS-->    
         <script type="text/javascript" src="/js/plugins/summernote/summernote.js"></script>  
         <script type='text/javascript' src='/js/plugins/jquery-validation/jquery.validate.js'></script>  
@@ -209,6 +213,30 @@
 
         <!-- DataTables JavaScript -->
         <script type="text/javascript" src="/js/plugins/datatables/jquery.dataTables.min.js"></script>  
+
+        <script>
+            $(function(){
+                $("#file-simple").fileinput({
+                        showUpload: false,
+                        showCaption: false,
+                        browseClass: "btn btn-danger",
+                        fileType: "any"
+                });            
+                $("#filetree").fileTree({
+                    root: '/',
+                    script: 'assets/filetree/jqueryFileTree.php',
+                    expandSpeed: 100,
+                    collapseSpeed: 100,
+                    multiFolder: false                    
+                }, function(file) {
+                    alert(file);
+                }, function(dir){
+                    setTimeout(function(){
+                        page_content_onresize();
+                    },200);                    
+                });                
+            });            
+        </script>
     <!-- END SCRIPTS -->         
     </body>
 </html>
