@@ -27,7 +27,7 @@
                     <!-- START X-NAVIGATION -->
                     <ul class="x-navigation">
                         <li class="xn-logo">
-                            <a href="{{ route('home') }}">SOB</a>
+                            <a href="{{ route('home') }}"><image src="../../img/mcc_logo@2x.png"></a>
                             <a href="#" class="x-navigation-control"></a>
                         </li>
                         <li class="xn-profile">

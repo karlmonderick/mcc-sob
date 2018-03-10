@@ -31,7 +31,7 @@
 					</div>
 					<div class="panel-body">
 						<ul class="list-group border-bottom">
-							<li class="list-group-item">1st Semester:<span class="badge badge-info"> </span></li>
+							<li class="list-group-item">1st Semester:<span class="badge badge-info"> {{$enrolled->count()}} </span></li>
 							<li class="list-group-item">2nd Semester:<span class="badge badge-info"> </span></li>
 						</ul>       
 						<button type="button" class="btn btn-success btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add No. of Enrollees</button>                         

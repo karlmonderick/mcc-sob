@@ -41,41 +41,81 @@ class EnrolledStudentsController extends Controller
         // dd($header);
         $escapedHeader=[];
 
-        //validate
+        /*
+            --validate--
+            this part loops the csv file and replace the characters
+            then insert the file to the $escapedItem variable
+            $escapedItem  has no further usage
+        */
         foreach ($header as $key => $value) {
             $escapedItem=preg_replace('/[., ]/', '', $value);
             array_push($escapedHeader, $escapedItem);
         }
+        
 
-        //looping through othe columns
+        /*
+            --looping through otheR columns--
+            loop while opening the csv file
+        */
+        set_time_limit(300);
+        
         while($columns=fgetcsv($file))
         {
           
-            //trim data
+            /*
+                --trim data--
+                another looping of the csv
+            */
             foreach ($columns as $key => &$value) 
             {
                 $value=iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE',$value);
             }
            
+
             $data= array_combine($escapedHeader, $columns);
 
-            // setting type
+            /* 
+                setting type
+                another looping of the csv
+            */
             foreach ($data as $key => &$value) {
                 // Table update
-                $num=$data['No'];
+                
                 $stud_num=$data['StudentNo'];
                 $surname=$data['Surname'];
                 $f_m_name=$data['Firstname-Middlename'];
-                $program=$data['Program'];
+                $course=$data['Course'];
                 $yr_level=$data['Yearlevel'];
+                $sem = 1;
+                $ay_id =2;
 
-                $es = EnrolledStudents::firstOrNew(['year_level' => $yr_level]);
-                $es->student_no = $stud_num;
-                $es->surname = $surname;
-                $es->firstname_middlename = $f_m_name;
-                $es->course = $program;
-                $es->sem =  1;
-                $es->ay_id = 2;
+                if($stud_num==NULL){
+                    return redirect()->back()->with('alert-danger', 'We think that there is a Student Number that is empty!');
+                }
+                if($surname==NULL){
+                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no surname! Please check CSV File.');
+                }
+                if($f_m_name==NULL){
+                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no first name! Please check CSV File.');
+                }
+                if($course==NULL){
+                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no course! Please check CSV File.');
+                }
+                if($yr_level==NULL){
+                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no year level! Please check CSV File.');
+                }
+
+
+                $es = EnrolledStudents::firstOrNew([
+                    'student_no' => $stud_num, 
+                    'firstname_middlename' => $f_m_name, 
+                    'surname' => $surname, 
+                    'course' => $course, 
+                    'year_level' => $yr_level, 
+                    'sem' => $sem, 
+                    'ay_id' => $ay_id
+                ]);
+
                 $es->save();
             }
         }
