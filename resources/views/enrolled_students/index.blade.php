@@ -35,7 +35,6 @@
 							<li class="list-group-item">2nd Semester:<span class="badge badge-info"> </span></li>
 						</ul>       
 						<button type="button" class="btn btn-success btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add No. of Enrollees</button>                         
-						<a href="{{ route('enrolled_students.create') }}" class="btn btn-success btn-sm btn-block" >Add No. of Enrollees</a>                         
 					</div>
 				</div>
 				<hr>
@@ -139,11 +138,26 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<strong>Select .csv file to upload</strong>
+						<strong>Select .csv file to upload: </strong>
 						<!-- <input type="file" name="upload_file" id="upload_file" required> -->
-						<input type="file" multiple id="file-simple" name="upload_file"/>		
+						<input type="file" multiple id="file-simple" name="upload_file" accept=".csv" required/>		
 						<input type="hidden" value="{{ csrf_token() }}" name="_token">
+						
 					</div>
+					<div class="form-group">
+						<input type="checkbox" name="header">
+					</div>
+					<div class="form-group">
+						<label>Semester</label>
+						<select name="sem" id="" class="select" required>
+							<option></option>
+							<option value="1">1st</option>
+							<option value="2">2nd</option>
+						</select>
+					</div>
+
+						<input type="hidden" value="{{$ay->id}}" name="ay_id">
+
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-sm btn-success btn-block" type="submit" name="submit"><i class="fa fa-cloud-upload"></i> Upload</button>

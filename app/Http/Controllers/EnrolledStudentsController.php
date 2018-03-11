@@ -30,96 +30,143 @@ class EnrolledStudentsController extends Controller
     public function store(Request $request)
     {   
         //get file
+        set_time_limit(300);
         $upload=$request->file('upload_file');
         $filePath=$upload->getRealPath();
 
-        //open and read
-        $file=fopen($filePath, 'r');
-
-        $header= fgetcsv($file);
-
-        // dd($header);
-        $escapedHeader=[];
-
-        /*
-            --validate--
-            this part loops the csv file and replace the characters
-            then insert the file to the $escapedItem variable
-            $escapedItem  has no further usage
-        */
-        foreach ($header as $key => $value) {
-            $escapedItem=preg_replace('/[., ]/', '', $value);
-            array_push($escapedHeader, $escapedItem);
+        if($request->header == false){
+            if (($handle = fopen ( $filePath, 'r' )) !== FALSE) {
+                while ( ($data = fgetcsv ( $handle, 1000, ',' )) !== FALSE ) {
+                    $data [2] = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE',$data[2]);
+                    $data [3] = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE',$data[3]);
+                    if($data [1]==NULL){
+                        return redirect()->back()->with('alert-danger', 'We think that there is a Student Number that is empty!');
+                    }
+                    if($data [2]==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no surname! Please check CSV File.');
+                    }
+                    if($data [3]==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no first name! Please check CSV File.');
+                    }
+                    if($data [4]==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no course! Please check CSV File.');
+                    }
+                    if($data [5]==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no year level! Please check CSV File.');
+                    }
+                    $csv_data = EnrolledStudents::firstOrNew([
+                        'student_no' => $data [1],
+                        'firstname_middlename' => $data[3], 
+                        'surname' => $data[2], 
+                        'course' => $data[4], 
+                        'year_level' => $data[5], 
+                        'sem' => $request->input('sem'), 
+                        'ay_id' => $request->input('ay_id')
+                    ]);
+                    $csv_data->save ();
+                }
+                fclose ( $handle );
+                return redirect()->back()->with('alert-success', 'Sucessfully Uploaded!');
+            }
+            else{
+                return redirect()->back()->with('alert-danger', 'Error in uploading!');
+            }
         }
-        
+        else{
+            //open and read
+            $file=fopen($filePath, 'r');
 
-        /*
-            --looping through otheR columns--
-            loop while opening the csv file
-        */
-        set_time_limit(300);
-        
-        while($columns=fgetcsv($file))
-        {
-          
+            $header= fgetcsv($file);
+
+            // dd($header);
+            $escapedHeader=[];
+
             /*
-                --trim data--
-                another looping of the csv
+                --validate--
+                this part loops the csv file and replace the characters
+                then insert the file to the $escapedItem variable
+                $escapedItem  has no further usage
             */
-            foreach ($columns as $key => &$value) 
+            foreach ($header as $key => $value) {
+                $escapedItem=preg_replace('/[., ]/', '', $value);
+                array_push($escapedHeader, $escapedItem);
+            }
+        
+
+            /*
+                --looping through otheR columns--
+                loop while opening the csv file
+            */
+            set_time_limit(300);
+        
+            while($columns=fgetcsv($file))
             {
-                $value=iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE',$value);
-            }
-           
-
-            $data= array_combine($escapedHeader, $columns);
-
-            /* 
-                setting type
-                another looping of the csv
-            */
-            foreach ($data as $key => &$value) {
-                // Table update
                 
-                $stud_num=$data['StudentNo'];
-                $surname=$data['Surname'];
-                $f_m_name=$data['Firstname-Middlename'];
-                $course=$data['Course'];
-                $yr_level=$data['Yearlevel'];
-                $sem = 1;
-                $ay_id =2;
+                /*
+                    --trim data--
+                    another looping of the csv
+                */
+                foreach ($columns as $key => &$value) 
+                {
+                    $value=iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE',$value);
+                }
+                
 
-                if($stud_num==NULL){
-                    return redirect()->back()->with('alert-danger', 'We think that there is a Student Number that is empty!');
-                }
-                if($surname==NULL){
-                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no surname! Please check CSV File.');
-                }
-                if($f_m_name==NULL){
-                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no first name! Please check CSV File.');
-                }
-                if($course==NULL){
-                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no course! Please check CSV File.');
-                }
-                if($yr_level==NULL){
-                    return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no year level! Please check CSV File.');
-                }
+                $data= array_combine($escapedHeader, $columns);
+
+                /* 
+                    setting type
+                    another looping of the csv
+                */
+                foreach ($data as $key => &$value) {
+                    // Table update
+                    
+                    $stud_num=$data['StudentNo'];
+                    $surname=$data['Surname'];
+                    $f_m_name=$data['Firstname-Middlename'];
+                    $course=$data['Course'];
+                    $yr_level=$data['Yearlevel'];
+                    $sem = $request->input('sem');
+                    $ay_id =$request->input('ay_id');
+
+                    if($stud_num==NULL){
+                        return redirect()->back()->with('alert-danger', 'We think that there is a Student Number that is empty!');
+                    }
+                    if($surname==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no surname! Please check CSV File.');
+                    }
+                    if($f_m_name==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no first name! Please check CSV File.');
+                    }
+                    if($course==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no course! Please check CSV File.');
+                    }
+                    if($yr_level==NULL){
+                        return redirect()->back()->with('alert-danger', 'Student No: '.$stud_num.' has no year level! Please check CSV File.');
+                    }
 
 
-                $es = EnrolledStudents::firstOrNew([
-                    'student_no' => $stud_num, 
-                    'firstname_middlename' => $f_m_name, 
-                    'surname' => $surname, 
-                    'course' => $course, 
-                    'year_level' => $yr_level, 
-                    'sem' => $sem, 
-                    'ay_id' => $ay_id
-                ]);
+                    $es = EnrolledStudents::firstOrNew([
+                        'student_no' => $stud_num, 
+                        'firstname_middlename' => $f_m_name, 
+                        'surname' => $surname, 
+                        'course' => $course, 
+                        'year_level' => $yr_level, 
+                        'sem' => $sem, 
+                        'ay_id' => $ay_id
+                    ]);
 
-                $es->save();
+                    $es->save();
+                }
             }
-        }
+
+
+            
             return redirect()->back()->with('alert-success', 'Sucessfully Uploaded!');
+        }
+            
+
+            
  
     }
 
