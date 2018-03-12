@@ -87,61 +87,17 @@
 					
 					{{ csrf_field() }}
 
-					<div class="form-group{{ $errors->has('es_id') ? ' has-error' : '' }}">
-						<label for="es_id" class="col-md-4 control-label">Student ID</label>
-
-						<div class="col-md-6">
-							<input id="es_id" type="text" class="form-control" pattern="\d*([-]?\d+)" name="es_id" required autofocus>
-
-							@if ($errors->has('es_id'))
-								<span class="help-block">
-									<strong>{{ $errors->first('es_id') }}</strong>
-								</span>
-							@endif
+					<div class="form-group">
+						<label class="col-md-4 control-label">Search</label>
+						<div class="col-md-6">                                                                                
+							<select class="form-control select" name="student" data-live-search="true">
+								@foreach($enrolled as $enrolled)
+									<option value="{{$enrolled->id}}">{{ $enrolled->student_no }} - {{ $enrolled->firstname_middlename }} {{ $enrolled->surname }}</option>
+								@endforeach
+							</select>
 						</div>
 					</div>
 
-					<div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
-						<label for="first_name" class="col-md-4 control-label">First Name</label>
-
-						<div class="col-md-6">
-							<input id="first_name" type="text" class="form-control" pattern="^[A-Za-z _]*[A-Za-z][A-Za-z _]*$" name="first_name" required autofocus>
-
-							@if ($errors->has('first_name'))
-								<span class="help-block">
-									<strong>{{ $errors->first('first_name') }}</strong>
-								</span>
-							@endif
-						</div>
-					</div>
-
-					<div class="form-group{{ $errors->has('middle_name') ? ' has-error' : '' }}">
-						<label for="middle_name" class="col-md-4 control-label">Middle Name</label>
-
-						<div class="col-md-6">
-							<input id="middle_name" type="text" class="form-control" pattern="^[A-Za-z _]*[A-Za-z][A-Za-z _]*$" name="middle_name" placeholder="Optional" autofocus>
-
-							@if ($errors->has('middle_name'))
-								<span class="help-block">
-									<strong>{{ $errors->first('middle_name') }}</strong>
-								</span>
-							@endif
-						</div>
-					</div>
-
-					<div class="form-group{{ $errors->has('last_name') ? ' has-error' : '' }}">
-						<label for="last_name" class="col-md-4 control-label">Last Name</label>
-
-						<div class="col-md-6">
-							<input id="last_name" type="text" class="form-control" pattern="^[A-Za-z _]*[A-Za-z][A-Za-z _]*$" name="last_name" required autofocus>
-
-							@if ($errors->has('last_name'))
-								<span class="help-block">
-									<strong>{{ $errors->first('last_name') }}</strong>
-								</span>
-							@endif
-						</div>
-					</div>
 
 					<div class="form-group{{ $errors->has('position') ? ' has-error' : '' }}">
 						<label for="position" class="col-md-4 control-label">Position</label>
@@ -158,38 +114,10 @@
 						{!! $errors->first('position', '<p class="help-block">:message</p>') !!}
 						</div>
 					</div>
-
-					<div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-						<label for="contact" class="col-md-4 control-label">Contact Number</label>
-
-						<div class="col-md-6">
-							<input id="contact" type="text" class="mask_phone form-control"  name="contact"  required>
-
-							@if ($errors->has('contact'))
-								<span class="help-block">
-									<strong>{{ $errors->first('contact') }}</strong>
-								</span>
-							@endif
-						</div>
-					</div>
-
-					<div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-						<label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-						<div class="col-md-6">
-							<input id="email" type="email" class="form-control" name="email"  required>
-
-							@if ($errors->has('email'))
-								<span class="help-block">
-									<strong>{{ $errors->first('email') }}</strong>
-								</span>
-							@endif
-						</div>
-					</div>
-
 					
 					<input type="hidden" name="role_id" value="4">
 					<input type="hidden" name="organization_ay_id" value="{{$organization_academic_year->id}}">
+					<input type="hidden" name="ay_id" value="{{$ay->id}}">
 					
 				
 				</div>

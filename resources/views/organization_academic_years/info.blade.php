@@ -25,7 +25,14 @@
                     </div>                                    
                 </div>
                 <div class="panel-body list-group border-bottom">
-                    <a href="#" class="list-group-item active" ><span class="fa fa-money"></span> Budget: <span class="badge badge-success">{{number_format($budget->sum('remaining'))}}</span></a>
+                    <a href="#" class="list-group-item active" ><span class="fa fa-money"></span> 
+                        Budget: 
+                            <span class="badge badge-success">
+                            @if($budget==0) {{ number_format(0) }} 
+                            @else {{ number_format($budget->remaining) }} 
+                            @endif
+                            </span>
+                    </a>
                     <a href="#activities" data-toggle="tab" class="list-group-item" ><span class="fa fa-bar-chart-o"></span> Activities</a>
                     <a href="#officers" data-toggle="tab" class="list-group-item"><span class="fa fa-users"></span> Officers <span class="badge badge-default">{{$officers->count()}}</span></a>                                
                     <a href="#reports" data-toggle="tab" class="list-group-item"><span class="fa fa-info"></span> Reports</a>
@@ -33,93 +40,7 @@
                     <a href="#settings" data-toggle="tab" class="list-group-item"><span class="fa fa-cog"></span> Settings</a>
                 @endif
                 </div>
-                <!-- <div class="panel-body">
-                    <h4 class="text-title">Friends</h4>
-                    <div class="row">
-                        <div class="col-md-4 col-xs-4">
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user.jpg"/>
-                                <span>Dmitry Ivaniuk</span>
-                            </a>                                            
-                        </div>
-                        <div class="col-md-4 col-xs-4">                                            
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user2.jpg"/>
-                                <span>John Doe</span>
-                            </a>                                            
-                        </div>
-                        <div class="col-md-4 col-xs-4">                                            
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user4.jpg"/>
-                                <span>Brad Pit</span>
-                            </a>                                            
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 col-xs-4">                                            
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user5.jpg"/>
-                                <span>John Travolta</span>
-                            </a>                                            
-                        </div>
-                        <div class="col-md-4 col-xs-4">                                            
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user6.jpg"/>
-                                <span>Darth Vader</span>
-                            </a>                                            
-                        </div>
-                        <div class="col-md-4 col-xs-4">                                            
-                            <a href="#" class="friend">
-                                <img src="assets/images/users/user7.jpg"/>
-                                <span>Samuel Leroy Jackson</span>
-                            </a>                                            
-                        </div>
-                    </div>
                 
-                    <h4 class="text-title">Photos</h4>
-                    <div class="gallery" id="links">                                                
-                        <a href="assets/images/gallery/music-1.jpg" title="Music Image 1" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/music-1.jpg" alt="Music Image 1"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/music-2.jpg" title="Music Image 2" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/music-2.jpg" alt="Music Image 2"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/music-3.jpg" title="Music Image 3" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/music-3.jpg" alt="Music Image 3"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/nature-1.jpg" title="Nature Image 1" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/nature-1.jpg" alt="Nature Image 1"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/nature-2.jpg" title="Nature Image 2" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/nature-2.jpg" alt="Nature Image 2"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/nature-3.jpg" title="Nature Image 3" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/nature-3.jpg" alt="Nature Image 3"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/nature-4.jpg" title="Nature Image 4" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/nature-4.jpg" alt="Nature Image 4"/>
-                            </div>                                            
-                        </a>
-                        <a href="assets/images/gallery/nature-5.jpg" title="Nature Image 5" class="gallery-item" data-gallery>
-                            <div class="image">
-                                <img src="assets/images/gallery/nature-5.jpg" alt="Nature Image 5"/>
-                            </div>                                            
-                        </a>                                        
-                    </div>
-                </div> -->
             </div>                            
             
         </div>

@@ -24,14 +24,17 @@
             <li class="xn-openable">
                 <a href="#">{{ $ay->ay_from }}-{{ $ay->ay_to }}</a>
                 <ul class="nav nav-third-level">
+                    <!-- OSCA -->
                     @if($auth->role_id==1) 
                         <li class="nav-item"><a class="nav-link" href="{{ route('organization_academic_years.show', $ay->id) }}"><em class="fa fa-users"></em> Accredited Organization</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('activities.show', $ay->id) }}"><em class="fa fa-file-text"></em> Activities</a></li>   
                         <li class="nav-item"><a class="nav-link" href="{{ route('budget.show', $ay->id) }}"><em class="fa fa-money"></em> Organization Budget</a></li>
+                    <!-- IGP -->
                     @elseif($auth->role_id==2) 
                         <li class="nav-item"><a class="nav-link" href="{{ route('funds.show', $ay->id) }}"><em class="fa fa-bank"></em> Funds</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('cash_request.show', $ay->id) }}"><em class="fa fa-money"></em> Cash Request</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('reports.show', $ay->id) }}"><em class="fa fa-book"></em>Reports</a></li>
+                    <!-- SAS -->
                     @elseif($auth->role_id==3)
                         <li class="nav-item">
                             <form action="{{route('academic_years.destroy', $ay->id)}}" class="pull-left" method="POST">      
@@ -42,9 +45,11 @@
                             </form>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('organization_academic_years.show', $ay->id) }}"><em class="fa fa-users"></em> Accredited Organization</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('enrolled_students.show', $ay->id) }}"><em class="fa fa-building"></em>Enrolled Student</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('activities.show', $ay->id) }}"><em class="fa fa-file-text"></em> Activities</a></li>                
                         <li class="nav-item"><a class="nav-link" href="{{ route('budget.show', $ay->id) }}"><em class="fa fa-money"></em> Organization Budget</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('enrolled_students.show', $ay->id) }}"><em class="fa fa-building"></em>Enrolled Student</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('funds.show', $ay->id) }}"><em class="fa fa-bank"></em> Funds</a></li>
+                    <!-- STUDENT -->
                     @elseif($auth->role_id==4)    
                         <li class="nav-item"><a class="nav-link" href="{{ route('activities.show', $ay->id) }}"><em class="fa fa-file-text"></em> Activities</a></li>  
                         <li class="nav-item"><a class="nav-link" href="{{ route('reports.show', $ay->id) }}"><em class="fa fa-book"></em> Reports</a></li>

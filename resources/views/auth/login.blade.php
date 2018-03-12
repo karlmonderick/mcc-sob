@@ -9,7 +9,7 @@
         <div class="login-logo"></div>
         <div class="login-body">
             <div class="login-title"><strong>Log In</strong> to your account</div>
-                <form class="form-horizontal" method="POST" action="{{ route('login_user') }}">
+                <form class="form-horizontal" method="POST" action="{{ route('login') }}">
                                 {{ csrf_field() }}
                     <div class="form-group{{ $errors->has('es_id') ? ' has-error' : '' }}">
                             <div class="col-md-12">

@@ -126,7 +126,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
        
-         $users = User::findOrFail($id);
+        $users = User::findOrFail($id);
         $name = $request->input('first_name');
         $m_name = $request->input('middle_name');
         $l_name = $request->input('last_name');
@@ -135,6 +135,7 @@ class UserController extends Controller
         $contact = $request->input('contact');
         $password = $request->input('current_pass');
         $check = Hash::check($password, $users->password);
+        
         if ($check == TRUE && $request->input('password') == $request->input('c_password'))
         {
             $users->password = bcrypt($request->input('password'));
@@ -147,8 +148,9 @@ class UserController extends Controller
             $users->save();
             return redirect()->route('users.show', $id)->with('alert-success', 'Data has been updated!');
         }
-         elseif ($email == TRUE)
+        elseif ($email == TRUE)
         {
+            if(sizeof(User::where('email','=',Input::get('email'))->get()) > 0) return redirect()->route('users.show', $id)->with('alert-danger', 'Email Already Exist');
             $users->email = $email;
             $users->save();
             return redirect()->route('users.show', $id)->with('alert-success', 'Data has been updated!');

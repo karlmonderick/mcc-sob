@@ -225,6 +225,9 @@ class OrganizationAcademicYearController extends Controller
 
     public function view_info($id)
     {
+
+       
+
         //Show Organizations
         $org_ay = DB::table('organization_academic_years')
         ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
@@ -240,6 +243,16 @@ class OrganizationAcademicYearController extends Controller
         ->leftjoin('users', 'activities.requestedBy', '=', 'users.id')
         ->select('activities.*', 'organizations.name', 'users.first_name as fname', 'users.last_name as lname', 'organization_academic_years.ay_id')
         ->where('organization_ay_id', $id)
+        ->get();
+
+         //Get AY
+         $ay_id = $org_ay->ay_id;
+         $ay = AcademicYear::find($ay_id); 
+
+        //Show enrolled
+        $enrolled = DB::table('enrolled_students')
+        ->where('ay_id', $ay->id)
+        ->where('sem', 1)
         ->get();
 
 
@@ -278,21 +291,22 @@ class OrganizationAcademicYearController extends Controller
             ->where('organization_ay_id', $id)
             ->get();
         }
+        else{
+            $budget = 0;
+        }
 
         $response = [ 
             'organization_academic_year' => $org_ay,
             'officers' => $officers,
             'activity' => $activity,
-            'budget' => $budget
-            
+            'budget' => $budget,
+            'enrolled' => $enrolled
         ];
         
-        //Get AY
-        $ay_id = $org_ay->ay_id;
-        $ay = AcademicYear::find($ay_id);
+        
 
         return view('organization_academic_years.info',$response, compact('ay'));
-        // return response()->json($activity);
+        // return response()->json($enrolled);
     }
 
 }

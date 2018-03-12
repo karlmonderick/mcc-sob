@@ -137,27 +137,24 @@
 					<h4 class="modal-title">Upload CSV of Enrolled Students</h4>
 				</div>
 				<div class="modal-body">
+					<input type="hidden" value="{{ csrf_token() }}" name="_token">
+					<input type="hidden" value="{{ $ay->id }}" name="ay_id">
 					<div class="form-group">
-						<strong>Select .csv file to upload: </strong>
-						<!-- <input type="file" name="upload_file" id="upload_file" required> -->
+						<strong>Select .csv file to upload</strong>
 						<input type="file" multiple id="file-simple" name="upload_file" accept=".csv" required/>		
-						<input type="hidden" value="{{ csrf_token() }}" name="_token">
-						
 					</div>
 					<div class="form-group">
-						<input type="checkbox" name="header">
+						<strong>With Header?</strong>
+						<input type="checkbox" name="header"/>		
 					</div>
 					<div class="form-group">
 						<label>Semester</label>
-						<select name="sem" id="" class="select" required>
+						<select name="sem" id="" class="select">
 							<option></option>
-							<option value="1">1st</option>
-							<option value="2">2nd</option>
+							<option value="1">1st Semester</option>
+							<option value="2">2nd Semester</option>
 						</select>
 					</div>
-
-						<input type="hidden" value="{{$ay->id}}" name="ay_id">
-
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-sm btn-success btn-block" type="submit" name="submit"><i class="fa fa-cloud-upload"></i> Upload</button>

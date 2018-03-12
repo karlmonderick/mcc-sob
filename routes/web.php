@@ -14,7 +14,6 @@
 Route::get('/', function () {
     return view('auth.login');
 });
-Route::post('/', 'Auth\LoginController@login')->name('login_user');
 
 Route::middleware(['auth'])->group( function(){
     Route::get('/home', 'HomeController@index')->name('home');
