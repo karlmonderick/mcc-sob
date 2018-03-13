@@ -65,58 +65,56 @@ class ActivityController extends Controller
         $ay_id = $ay->id;
         $current_date = date('Y'.'-'.'m'.'-'.'d');
 
-            $activity = new Activity;
+        $activity = new Activity;
+        $activity->title = $request->input('title');
+        $activity->nature = $request->input('nature');
+        $activity->date = $request->input('date');
+        $activity->endDate = $request->input('endDate');
+        $activity->venue = $request->input('venue');
+        $activity->participants = $request->input('participants');
+        $activity->expectedAttendees = $request->input('expectedAttendees');
+
+        $budgetDescription = [
+                'Description' => $request->input('budgetDescription'),
+                'Cost' => $request->input('budgetCost'),
+                'Quantity' => $request->input('budgetQuantity')
+        ];
+        $activity->budgetDescription = json_encode($budgetDescription);
+        $activity->buggetTotal = $request->input('buggetTotal');
+        $activity->approval = $request->input('approval');
+        $activity->review_id = $request->input('approval2');
+        //  $activity->notify = 0;
+        //  $activity->notify2 = 0;
+        //  $activity->notify3 = 0;
+        //  $activity->released = 0;
+        //  $activity->released_by_igp = 0;
+        $user_id = Auth::id();
+        
+        $organization_ay_id_user = DB::table('officers')
+        ->join('users', 'officers.user_id', '=', 'users.id')
+        ->select('officers.*')
+        ->where('users.id', $user_id)
+        ->first();
             
-             $activity->title = $request->input('title');
-             $activity->nature = $request->input('nature');
-             $activity->date = $request->input('date');
-             $activity->endDate = $request->input('endDate');
-     
-             $activity->venue = $request->input('venue');
-             $activity->participants = $request->input('participants');
-             $activity->expectedAttendees = $request->input('expectedAttendees');
 
-             $budgetDescription = [
-                     'Description' => $request->input('budgetDescription'),
-                     'Cost' => $request->input('budgetCost'),
-                     'Quantity' => $request->input('budgetQuantity')
-             ];
-             $activity->budgetDescription = json_encode($budgetDescription);
-             $activity->buggetTotal = $request->input('buggetTotal');
-             $activity->approval = $request->input('approval');
-             $activity->review_id = $request->input('approval2');
-            //  $activity->notify = 0;
-            //  $activity->notify2 = 0;
-            //  $activity->notify3 = 0;
-            //  $activity->released = 0;
-            //  $activity->released_by_igp = 0;
-             $user_id = Auth::id();
-             
-             $organization_ay_id_user = DB::table('officers')
-             ->join('users', 'officers.user_id', '=', 'users.id')
-             ->select('officers.*')
-             ->where('users.id', $user_id)
-             ->first();
-             
+        $activity->requestedBy = Auth::id();
+        $activity->organization_ay_id = $organization_ay_id_user->organization_ay_id;
 
-             $activity->requestedBy = Auth::id();
-             $activity->organization_ay_id = $organization_ay_id_user->organization_ay_id;
-
-             if($activity->date < $current_date)
-            	{
-            		return redirect()->back()->withInput()->with('alert-danger', 'Oooops sorry. It seems you are trying a date that is already in the past.');
-            	}
-	        elseif($request->input('date') > $request->input('endDate'))
-		        {
-		            return redirect()->back()->withInput()->with('alert-danger', 'Date Error!');
-		        }        
-	        else
-		        {
-		            $activity->save(); 
-		        	
-                    return redirect()->route('activities.show', $ay_id)->with('alert-success', 'Data has been saved');
-                    // return response()->json($activity);
-		        }
+        if($activity->date < $current_date)
+        {
+            return redirect()->back()->withInput()->with('alert-danger', 'Oooops sorry. It seems you are trying a date that is already in the past.');
+        }
+        elseif($request->input('date') > $request->input('endDate'))
+        {
+            return redirect()->back()->withInput()->with('alert-danger', 'Date Error!');
+        }        
+        else
+        {
+            $activity->save(); 
+            
+            return redirect()->route('activities.show', $ay_id)->with('alert-success', 'Data has been saved');
+            // return response()->json($activity);
+        }
 
         
     }

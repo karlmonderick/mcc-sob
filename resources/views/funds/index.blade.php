@@ -18,59 +18,136 @@
 					<h3 class="card-title">Funds A.Y.  {{ $ay->ay_from }} - {{ $ay->ay_to }}</h3>
 					<h6 class="card-subtitle mb-2 text-muted">List</h6>
 					<p>
-						<!-- @if(Auth::user()->role_id == 2)
-							<form method="POST" action="{{route('funds.allocate_funds')}}">
-								<input type="hidden" name="_method" value="post">
-								<input type="hidden" name="_token" value="{{ csrf_token() }}"> 
-								<input type="hidden" name="ay_id" value="{{$ay->id}}">
-								<div class="col-sm-2">
-									<select name="sem" id="" class="form-control">
-										<option value="1">1st Semester</option>
-										<option value="2">2nd Semester</option	>
-									</select>
-								</div>
-								
-								<button type="submit" class="btn btn-success">Allocate Funds</button>
-							<form>
-						@endif -->
 
-						<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#1stSem">Allocate Budget for 1st Semester</button>
-						<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#2ndSem">Allocate Budget for 2nd Semester</button>
+						<div class="btn-group">
+							<a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle">Generate Funds: <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<form method="POST" action="{{route('enrolled_ay.store')}}">
+									<input type="hidden" value="{{ csrf_token() }}" name="_token">
+										<input type="hidden" name="sem" value="1"> 
+										<input type="hidden" name="ay_id" value="{{$ay->id}}">
+										<button type="submit" class="btn btn-block btn-info">1st Semester</button>
+									</form>
+								</li>
+								<li>
+									<form method="POST" action="{{route('enrolled_ay.store')}}">
+										<input type="hidden" value="{{ csrf_token() }}" name="_token">
+										<input type="hidden" name="sem" value="2"> 
+										<input type="hidden" name="ay_id" value="{{$ay->id}}">
+										<button type="submit" class="btn btn-block btn-info">2nd Semester</button>
+									</form>
+								</li>                                            
+							</ul>
+						</div>
 
-
+						<div class="btn-group">
+							<a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle">Allocate Funds: <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#1stSem">Allocate Budget for 1st Semester</button>
+								</li>
+								<li>
+									<button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#2ndSem">Allocate Budget for 2nd Semester</button>
+								</li>                                            
+							</ul>
+						</div>
 
 					</p>
+
 					<hr>
+				
 					<div class="col-md-6">
-						<table width="100%" class="table table-striped table-bordered table-hover datatable">
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Funds Name</th>
-									<th>Amount (₱)</th>
-									<th>Semester</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php $i=1; ?>
-								@foreach($funds as $funds)
-								<tr>
-									<td>{{ $i++ }}</td>
-									<td>{{ $funds->name }}</td>
-									<td><?php echo number_format($funds->amount) ?></td>
-									<td>
-										@if($funds->semester == 1) 
-											1st
-										@else 
-											2nd 
-										@endif
-									</td>
-								</tr>
-								@endforeach
-							</tbody>
-						</table>
-						<!-- /.table-responsive -->
+						<!-- START JUSTIFIED TABS -->
+						<div class="panel panel-default tabs">
+							<ul class="nav nav-tabs nav-justified">
+								<li class="active"><a href="#tab-firstfunds" data-toggle="tab">First Semester</a></li>
+								<li><a href="#tab-secondfunds" data-toggle="tab">Second Semester</a></li>
+							</ul>
+							<div class="panel-body tab-content">
+								<div class="tab-pane active" id="tab-firstfunds">
+									<ul class="list-group border-bottom">
+										<li class="list-group-item">Total Enrolled: <span class="badge badge-danger"> @if($total_enrollee1>0){{$total_enrollee1}} @else N/A @endif</span></li>
+										@foreach($institute_enrolled_1 as $ienrolled1)
+											<li class="list-group-item">{{ $ienrolled1->name }}<span class="badge badge-info"> @if(count($ienrolled1)>0){{$ienrolled1->no_of_students}} @else N/A @endif</span></li>
+										@endforeach
+										
+									</ul>
+									<br>    
+									<table width="100%" class="table table-striped table-bordered table-hover datatable">
+										<thead>
+											<tr>
+											<th>#</th>
+											<th>Funds Name</th>
+											<th>Amount (₱)</th>
+											<th>Semester</th>
+												@if($auth->role_id == 1)
+													<th>Option</th>
+												@endif
+											</tr>
+										</thead>
+										<tbody>
+											<?php $i=1; ?>
+											@foreach($funds1sem as $funds)
+											<tr>
+												<td>{{ $i++ }}</td>
+												<td>{{ $funds->name }}</td>
+												<td><?php echo number_format($funds->amount) ?></td>
+												<td>
+													@if($funds->semester == 1) 
+														1st
+													@else 
+														2nd 
+													@endif
+												</td>
+											</tr>
+											@endforeach
+										</tbody>
+									</table>    
+								</div>
+								<div class="tab-pane" id="tab-secondfunds">
+									<ul class="list-group border-bottom">
+										<li class="list-group-item">Total Enrolled:<span class="badge badge-danger"> @if($total_enrollee2>0){{$total_enrollee2}} @else N/A @endif</span></li>
+										@foreach($institute_enrolled_2 as $ienrolled2)
+											<li class="list-group-item">{{ $ienrolled2->name }}<span class="badge badge-info"> @if(count($ienrolled2)>0){{$ienrolled2->no_of_students}} @else N/A @endif</span></li>
+										@endforeach
+									</ul>   
+									<br>
+									<table width="100%" class="table table-striped table-bordered table-hover datatable">
+										<thead>
+											<tr>
+											<th>#</th>
+											<th>Funds Name</th>
+											<th>Amount (₱)</th>
+											<th>Semester</th>
+												@if($auth->role_id == 1)
+													<th>Option</th>
+												@endif
+											</tr>
+										</thead>
+										<tbody>
+											<?php $i=1; ?>
+											@foreach($funds2sem as $funds2)
+											<tr>
+												<td>{{ $i++ }}</td>
+												<td>{{ $funds2->name }}</td>
+												<td><?php echo number_format($funds2->amount) ?></td>
+												<td>
+													@if($funds2->semester == 2) 
+														1st
+													@else 
+														2nd 
+													@endif
+												</td>
+											</tr>
+											@endforeach
+										</tbody>
+									</table>    
+								</div>                 
+							</div>
+						</div>    
 					</div>
+
                
 					<div class="col-md-6">
 						<!-- START JUSTIFIED TABS -->
@@ -309,7 +386,7 @@
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '4'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ics_org;
+															$sanum = (($sem1->amount*.90)*$percent)/$count_ics_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '5'){
@@ -433,9 +510,12 @@
 
 												foreach($institute_enrolled_2 as $ie1){
 													if($isc->institute_id == $ie1->institute_id){
-														$percent = ($ie1->no_of_students / $total_enrollee2);
-														$acadnum =  $sem2->amount*$percent;
-														
+														if($ie1->no_of_students > 0 && $total_enrollee1 > 0){
+															$percent = ($ie1->no_of_students / $total_enrollee1);
+															$acadnum =  $sem2->amount*$percent;
+														}else{
+															$acadnum = 0;
+														}	
 														echo '<td><p>₱ '.number_format($acadnum).'</p></td>';
 														echo '</tr>';
 													}
@@ -465,9 +545,9 @@
 												$scequal =  ($sem2->amount/2)/count($isc_orgs);
 												echo '<td><p>₱ '.number_format($scequal).'</p></td>';
 
-												foreach($institute_enrolled_2 as $ie1){
+												foreach($institute_enrolled_1 as $ie1){
 													if($isc->institute_id == $ie1->institute_id){
-														$percent = ($ie1->no_of_students / $total_enrollee2);
+														$percent = ($ie1->no_of_students / $total_enrollee1);
 														$scnum =  ($sem2->amount/2)*$percent;
 														
 														echo '<td><p>₱ '.number_format($scnum).'</p></td>';
@@ -494,27 +574,27 @@
 												$saequal =  $sem2->amount/$orgs;
 												echo '<td><p>₱ '.number_format($saequal).'</p></td>';
 
-												foreach($institute_enrolled_2 as $ie1){
+												foreach($institute_enrolled_1 as $ie1){
 													if($io->institute_id == $ie1->institute_id){
-														$percent = ($ie1->no_of_students / $total_enrollee2);
+														$percent = ($ie1->no_of_students / $total_enrollee1);
 														if($io->institute_id == '2'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ias_org;
+															$sanum =  (($sem2->amount*.90)*$percent)/$count_ias_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '3'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ibe_org;
+															$sanum =  (($sem2->amount*.90)*$percent)/$count_ibe_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '4'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ics_org;
+															$sanum = (($sem2->amount*.90)*$percent)/$count_ics_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '5'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ihm_org;
+															$sanum =  (($sem2->amount*.90)*$percent)/$count_ihm_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														elseif($io->institute_id == '6'){
-															$sanum =  (($sem1->amount*.90)*$percent)/$count_ite_org;
+															$sanum =  (($sem2->amount*.90)*$percent)/$count_ite_org;
 															echo '<td><p>₱ '.number_format($sanum).'</p></td>';
 														}
 														else{
@@ -565,7 +645,6 @@
 		</div>
 
 	</div>
-</div>
-        
+</div>     
 
 @endsection

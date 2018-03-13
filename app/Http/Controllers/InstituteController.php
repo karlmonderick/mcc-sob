@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Institute;
 use App\User;
+use App\Course;
 use App\AcademicYear;
 use App\EnrolledAcademicYear;
 use Illuminate\Http\Request;
@@ -18,8 +19,10 @@ class InstituteController extends Controller
     public function index()
     {
         $institute = Institute::all()->sortBy('code');
+        $course = Course::all()->sortBy('code');
         $response = [
-            'institutes' => $institute
+            'institutes' => $institute,
+            'courses' => $course
         ];
         $user = User::all();
         return view('institutes.index',$response, compact('user'));
@@ -47,22 +50,13 @@ class InstituteController extends Controller
         return view('institutes.show', $response, compact('institutes', 'ay', 'eay'));
        // return response()->json($ay);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         return view('institutes.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+   
     public function store(Request $request)
     {
         $this -> validate($request, [
@@ -86,34 +80,8 @@ class InstituteController extends Controller
         }
 
     }
-    public function store2(Request $request)
-    {$this -> validate($request, [
-            'institute_id' => 'required|unique:enrolled_academic_years',
-        ]);
-        $ay = AcademicYear::where('id', '=', $request->input('ay_id'))->first();
-        $ay_id = $ay->id;
-      $EnrolledAcademicYear = new EnrolledAcademicYear;
-
-        $EnrolledAcademicYear->no_of_students = $request->input('no_of_students');
-        $EnrolledAcademicYear->ay_id = $request->input('ay_id');
-        $EnrolledAcademicYear->institute_id = $request->input('institute_id');
-        $EnrolledAcademicYear->save(); 
-        return redirect()->route('institutes.show', $ay_id)->with('alert-success', 'Data has been added!');
-}
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Department  $department
-     * @return \Illuminate\Http\Response
-     */
     
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Department  $department
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
 
@@ -128,13 +96,6 @@ class InstituteController extends Controller
      return view('institutes.edit', $response);
     } 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Department  $department
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         
@@ -154,15 +115,53 @@ class InstituteController extends Controller
         
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Department  $department
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $institute = Institute::find($id)->delete();
         return redirect()->route('institutes.index')->with('alert-success', 'Data has been deleted!');
+    }
+
+    public function store_courses(Request $request)
+    {
+        $this -> validate($request, [
+            'name' => 'required|unique:institutes',
+            'code' => 'required|unique:institutes',
+        ]);
+        
+        $ac_year = AcademicYear::all()->first();
+
+        if(count($ac_year) != 0)
+        {
+            $course = Course::firstOrNew([
+                'name' =>  $request->input('name'),
+                'code' => $request->input('code'),
+                'institute_id' => $request->input('institute_id')
+            ]);
+            $course->save();
+            return redirect()->back()->with('alert-success', $course->name.' has been added!');
+        }
+        else
+        {
+            return redirect()->back()->with('alert-danger', 'Failed to add course. Please add academic year first!');
+        }
+    }
+
+    public function store_2(Request $request)
+    {
+        $this -> validate($request, [
+            'institute_id' => 'required|unique:enrolled_academic_years',
+        ]);
+        $ay = AcademicYear::where('id', '=', $request->input('ay_id'))->first();
+        $ay_id = $ay->id;
+     
+        $EnrolledAcademicYear = new EnrolledAcademicYear;
+
+        $EnrolledAcademicYear->no_of_students = $request->input('no_of_students');
+        $EnrolledAcademicYear->ay_id = $request->input('ay_id');
+        $EnrolledAcademicYear->institute_id = $request->input('institute_id');
+
+        return response()->json($EnrolledAcademicYear);
+        // $EnrolledAcademicYear->save(); 
+        // return redirect()->route('institutes.show', $ay_id)->with('alert-success', 'Data has been added!');
     }
 }

@@ -29,13 +29,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        //GET SEMESTER'S FUNDS 
-        $funds1 = Funds::where('semester', 1)
-        ->select('funds.*')
-        ->get();
-        $funds2 = Funds::where('semester', 2)
-        ->select('funds.*')
-        ->get();
+        
 
         //GET ALL ACADEMIC YEARS
         $a_year = DB::table('academic_years')
@@ -65,8 +59,8 @@ class HomeController extends Controller
         $acad_year = AcademicYear::where('ay_from','=',$year)->first();
         if(count($acad_year) >= 1)
         {
-        $current_ay = $acad_year->id;
-        $organization_num = OrganizationAcademicYear::where('ay_id','=',$current_ay)
+            $current_ay = $acad_year->id;
+            $organization_num = OrganizationAcademicYear::where('ay_id','=',$current_ay)
             ->where('accredited', 1)
             ->count();
         }
@@ -74,6 +68,16 @@ class HomeController extends Controller
         {
            $organization_num = 0; 
         }
+
+        //GET SEMESTER'S FUNDS 
+        $funds1 = Funds::where('semester', 1)
+        ->select('funds.*')
+        ->where('ay_id', $current_ay)
+        ->get();
+        $funds2 = Funds::where('semester', 2)
+        ->select('funds.*')
+        ->where('ay_id', $current_ay)
+        ->get();
 
         //IF ROLE IS STUDENT
         if(Auth::user()->role_id == 4 ){

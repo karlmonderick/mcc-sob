@@ -19,6 +19,7 @@
         }
     </style>
     <body class="page-container-boxed">
+        
         <!-- START PAGE CONTAINER -->
         <div class="page-container">
             
@@ -102,8 +103,7 @@
             <!-- END PAGE SIDEBAR -->
             
             <!-- PAGE CONTENT -->
-                <div class="page-content">
-                
+                <div class="page-content">        
                     <!-- START X-NAVIGATION VERTICAL -->
                 
                     <ul class="x-navigation x-navigation-horizontal x-navigation-panel">
@@ -130,8 +130,8 @@
 
                     </ul>
                     <!-- END X-NAVIGATION VERTICAL -->                    
-               
-                    @include('errors.message')
+                    @include('errors.message')             
+                                            
 
                     @yield('content')
                     <!-- END PAGE CONTENT WRAPPER -->                

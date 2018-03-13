@@ -9,7 +9,8 @@ class EnrolledAcademicYear extends Model
     protected $fillable = [
         'no_of_students',
         'institute_id',
-        'ay_id'
+        'ay_id',
+        'sem'
     ];
 
    public function Institute(){

@@ -22,19 +22,51 @@
 	<!-- END CONTENT FRAME TOP -->
 	
 	<!-- START CONTENT FRAME LEFT -->
-	<div class="content-frame-left">
+	<div class="content-frame-left">	
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Total # of Enrollees:</h3>
+						<h3 class="panel-title">Number of Enrollees:</h3>
 					</div>
 					<div class="panel-body">
+						<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">
+							<i class="fa fa-plus-circle"></i>Add Students
+						</button>
+						<hr>
 						<ul class="list-group border-bottom">
-							<li class="list-group-item">1st Semester:<span class="badge badge-info"> {{$enrolled->count()}} </span></li>
-							<li class="list-group-item">2nd Semester:<span class="badge badge-info"> </span></li>
+							<li class="list-group-item active">
+								1st Semester:<span class="badge badge-danger"> {{$enrolled1->count()}} </span>
+							</li>
+							<?php $i = 1; ?>
+								@foreach($institutes as $institute)
+									<li class="list-group-item">	
+										{{ $institute->code }}
+										@foreach($enrolled1_num as $enrolled_1)
+											@if($institute->id == $enrolled_1->institute_id) 
+											<span class="badge badge-info"> {{ $enrolled_1->no_of_students }} </span> 
+											@endif 
+										@endforeach 
+									</li>
+								@endforeach
 						</ul>       
-						<button type="button" class="btn btn-success btn-sm btn-block" data-toggle="modal" data-target="#myModal">Add No. of Enrollees</button>                         
+						<hr>
+						<ul class="list-group border-bottom">
+							<li class="list-group-item active">
+								2nd Semester:<span class="badge badge-danger"> {{$enrolled2->count()}} </span>
+							</li>
+							<?php $i = 1; ?>
+								@foreach($institutes as $institute)
+									<li class="list-group-item">	
+										{{ $institute->code }}
+											@foreach($enrolled2_num as $enrolled_2)
+												@if($institute->id == $enrolled_2->institute_id) 
+												<span class="badge badge-info"> {{ $enrolled_2->no_of_students }} </span> 
+												@endif 
+											@endforeach 
+									</li>
+								@endforeach
+						</ul>      						                         
 					</div>
 				</div>
 				<hr>
@@ -67,18 +99,20 @@
 										<th>#</th>
 										<th>Student ID</th>
 										<th>Name</th>
-										<th>Cource</th>
+										<th>Course</th>
 									</tr>
 								</thead>
 								<tbody>
 									
 									<?php $i=1; ?>
-									@foreach($enrolled as $enrolled)
+									@foreach($enrolled1 as $enrolled)
 										</tr>
 											<td>{{ $i++ }}</td>
 											<td>{{ $enrolled->student_no }}</td>
 											<td>{{ $enrolled->firstname_middlename }} {{ $enrolled->surname }}</td>
-											<td>{{ $enrolled->course }}</td>
+											<td>
+												{{ $enrolled->course_code }}
+											</td>
 										</tr>
 									@endforeach	
 								</tbody>
@@ -89,20 +123,24 @@
 								<thead>
 									<tr>
 										<th>#</th>
-										<th>Organization</th>
-										<th>Budget</th>
-										<th>Source</th>
+										<th>Student ID</th>
+										<th>Name</th>
+										<th>Cource</th>
 									</tr>
 								</thead>
 								<tbody>
-									
-									<?php $i=1; ?>
-									<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									</tr>
+									<?php $j=1; ?>
+									@foreach($enrolled2 as $enrolled2)
+										</tr>
+											<td>{{ $j++ }}</td>
+											<td>{{ $enrolled2->student_no }}</td>
+											<td>{{ $enrolled2->firstname_middlename }} {{ $enrolled2->surname }}</td>
+											<td>
+												{{ $enrolled2->course_code }}
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
 							</table>		
 						</div>                      
 					</div>
@@ -149,13 +187,15 @@
 					</div>
 					<div class="form-group">
 						<label>Semester</label>
-						<select name="sem" id="" class="select">
+						<select name="sem" id="" class="select" required>
 							<option></option>
 							<option value="1">1st Semester</option>
 							<option value="2">2nd Semester</option>
 						</select>
 					</div>
 				</div>
+				
+
 				<div class="modal-footer">
 					<button class="btn btn-sm btn-success btn-block" type="submit" name="submit"><i class="fa fa-cloud-upload"></i> Upload</button>
 				</div>

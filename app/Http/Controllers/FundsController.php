@@ -22,13 +22,15 @@ class FundsController extends Controller
     public function create_funds($id)
     {
         $ay = AcademicYear::find($id);
-        return view('funds.create', compact('ay'));
+        return view('funds.allocate', compact('ay'));
     }
 
     public function store(Request $request) //BUDGET ALLOCATION PROCESS
     {
 
         $total_enrollee = DB::table('enrolled_academic_years')
+        ->where('ay_id',$request->input('ay_id'))
+        ->where('sem',$request->input('sem'))
         ->sum('enrolled_academic_years.no_of_students');
         
         $enrollee = DB::table('enrolled_academic_years')
@@ -54,34 +56,40 @@ class FundsController extends Controller
         // return view('funds.index', $response, compact('ay'))->with('alert.success', 'Data has been saved');
     }
 
-     public function show($id)
+    public function show($id)
     {
-        
+        //GET ALL FUNDS
         $funds = DB::table('funds')
         ->join('academic_years', 'funds.ay_id', '=', 'academic_years.id')
         ->select('funds.*', 'academic_years.ay_from', 'academic_years.ay_to')
         ->where('ay_id', $id)
         ->get();
-
+        //GET FUNDS SEM 1
         $funds1sem = DB::table('funds')
         ->where('funds.ay_id', $id)
         ->where('funds.semester', 1)
         ->orderby('name')
         ->get();
-
+        //GET FUNDS SEM 2
         $funds2sem = DB::table('funds')
         ->where('funds.ay_id', $id)
         ->where('funds.semester', 2)
         ->orderby('name')
         ->get();
+        //--GET FUNDS
 
-        $response = [ 
-            'funds' => $funds
-        ];
+
+        //GET ALL INSTITUTES
         $ins = Institute::all();
+        //--GET ALL INSTITUTES
+
+
+        //FIND CURRENT AY
         $ay = AcademicYear::find($id);
+        //--FIND CURRENT AY
 
 
+        //GET BUDGET FOR SEM 1
         $budget = DB::table('budgets')
         ->join('organization_academic_years', 'budgets.organization_ay_id', '=', 'organization_academic_years.id')
         ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id') 
@@ -93,6 +101,7 @@ class FundsController extends Controller
         ->orderby('name', 'asc')
         ->get();
 
+        //GET BUDGET FOR SEM 2
         $budget2 = DB::table('budgets')
         ->join('organization_academic_years', 'budgets.organization_ay_id', '=', 'organization_academic_years.id')
         ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id') 
@@ -104,159 +113,170 @@ class FundsController extends Controller
         ->orderby('name', 'asc')
         ->get();
 
-             //GET TOTAL NUMBER OF ENROLLED sem 1
-             $total_enrollee1 = DB::table('enrolled_academic_years')
-             ->where('sem', 1)
-             ->sum('enrolled_academic_years.no_of_students');
 
-             //GET TOTAL NUMBER OF ENROLLED sem 2
-             $total_enrollee2 = DB::table('enrolled_academic_years')
-             ->where('sem', 2)
-             ->sum('enrolled_academic_years.no_of_students');
+        //GET TOTAL NUMBER OF ENROLLED sem 1
+        $total_enrollee1 = DB::table('enrolled_academic_years')
+        ->where('sem', 1)
+        ->where('ay_id', $id)
+        ->sum('enrolled_academic_years.no_of_students');
 
-             $institute_enrolled_1= DB::table('institutes')
-             ->leftjoin('enrolled_academic_years', 'institutes.id', '=', 'enrolled_academic_years.institute_id')
-             ->select('institutes.*', 'enrolled_academic_years.*')
-             ->orderby('code')
-             ->where('enrolled_academic_years.ay_id', '=', $id)
-             ->where('sem', 1)
-             ->get();
+        //GET TOTAL NUMBER OF ENROLLED sem 2
+        $total_enrollee2 = DB::table('enrolled_academic_years')
+        ->where('sem', 2)
+        ->where('ay_id', $id)
+        ->sum('enrolled_academic_years.no_of_students');
 
-             $institute_enrolled_2= DB::table('institutes')
-             ->leftjoin('enrolled_academic_years', 'institutes.id', '=', 'enrolled_academic_years.institute_id')
-             ->select('institutes.*', 'enrolled_academic_years.*')
-             ->orderby('code')
-             ->where('enrolled_academic_years.ay_id', '=', $id)
-             ->where('sem', 2)
-             ->get();
+        //GET NUMBER OF ENROLLED sem 2
+        $institute_enrolled_1= DB::table('institutes')
+        ->leftjoin('enrolled_academic_years', 'institutes.id', '=', 'enrolled_academic_years.institute_id')
+        ->select('institutes.*', 'enrolled_academic_years.*')
+        ->orderby('code')
+        ->where('enrolled_academic_years.ay_id', '=', $id)
+        ->where('sem', 1)
+        ->get();
+
+        //GET NUMBER OF ENROLLED sem 2
+        $institute_enrolled_2= DB::table('institutes')
+        ->leftjoin('enrolled_academic_years', 'institutes.id', '=', 'enrolled_academic_years.institute_id')
+        ->select('institutes.*', 'enrolled_academic_years.*')
+        ->orderby('code')
+        ->where('enrolled_academic_years.ay_id', '=', $id)
+        ->where('sem', 2)
+        ->get();
+
 
     
-            //GET ALL ACCREDITED ORGANIZATION
-            $all_ac_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET ALL ACCREDITED ORGANIZATION
+        $all_ac_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET ALL INSTITUTE ORG.
-            $io_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('institute_id')
-            ->where('ay_id',$id)
-            ->where('type','IO')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET ALL INSTITUTE ORG.
+        $io_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('institute_id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET ALL CULTURAL ORG.
-            $co_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('type','CO')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET ALL CULTURAL ORG.
+        $co_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('type','CO')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET ALL COLLEGE WIDE ORG.
-            $cw_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('type','CW')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET ALL COLLEGE WIDE ORG.
+        $cw_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('type','CW')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET ALL ISC
-            $isc_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('name')
-            ->where('ay_id',$id)
-            ->where('type','ISC')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET ALL ISC
+        $isc_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('name')
+        ->where('ay_id',$id)
+        ->where('type','ISC')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET SSC
-            $ssc_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('type','SSC')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET SSC
+        $ssc_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('type','SSC')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET SP
-            $sp_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('type','SP')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET SP
+        $sp_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('type','SP')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
     
-            //GET SPORTS
-            $sports_orgs = DB::table('organizations')
-            ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-            ->orderby('code')
-            ->where('ay_id',$id)
-            ->where('type','SPORTS')
-            ->where('organization_academic_years.accredited', 1)
-            ->get();
+        //GET SPORTS
+        $sports_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$id)
+        ->where('type','SPORTS')
+        ->where('organization_academic_years.accredited', 1)
+        ->get();
 
-            //GET number of organization in a institute
-            $num_org = DB::table('organization_academic_years')
-            ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
-            ->orderby('institute_id')
-            ->where('ay_id',$id)
-            ->where('type','IO')
-            ->groupBy('institute_id')
-            ->select('institute_id', DB::raw('count(*) as total'))
-            ->pluck('total','institute_id')->all();
+        //GET all number of organization in a institute
+        $num_org = DB::table('organization_academic_years')
+        ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
+        ->orderby('institute_id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->groupBy('institute_id')
+        ->select('institute_id', DB::raw('count(*) as total'))
+        ->pluck('total','institute_id')->all();
 
-            //GET number of organization in an institute
-             $count_ias_org = DB::table('organizations')
-             ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-             ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
-             ->where('ay_id',$id)
-             ->where('type','IO')
-             ->where('organization_academic_years.accredited', 1)
-             ->where('institutes.code','=', 'IAS')
-             ->count();
-             $count_ibe_org = DB::table('organizations')
-             ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-             ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
-             ->where('ay_id',$id)
-             ->where('type','IO')
-             ->where('organization_academic_years.accredited', 1)
-             ->where('institutes.code','=', 'IBE')
-             ->count();
-             $count_ics_org = DB::table('organizations')
-             ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-             ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
-             ->where('ay_id',$id)
-             ->where('type','IO')
-             ->where('organization_academic_years.accredited', 1)
-             ->where('institutes.code','=', 'ICS')
-             ->count();
-             $count_ihm_org = DB::table('organizations')
-             ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-             ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
-             ->where('ay_id',$id)
-             ->where('type','IO')
-             ->where('organization_academic_years.accredited', 1)
-             ->where('institutes.code','=', 'IHM')
-             ->count();
-             $count_ite_org = DB::table('organizations')
-             ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-             ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
-             ->where('ay_id',$id)
-             ->where('type','IO')
-             ->where('organization_academic_years.accredited', 1)
-             ->where('institutes.code','=', 'ITE')
-             ->count();
+        //GET number of organization in an institute
+        $count_ias_org = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->where('institutes.code','=', 'IAS')
+        ->count();
+        $count_ibe_org = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->where('institutes.code','=', 'IBE')
+        ->count();
+        $count_ics_org = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->where('institutes.code','=', 'ICS')
+        ->count();
+        $count_ihm_org = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->where('institutes.code','=', 'IHM')
+        ->count();
+        $count_ite_org = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->join('institutes', 'organizations.institute_id', '=', 'institutes.id')
+        ->where('ay_id',$id)
+        ->where('type','IO')
+        ->where('organization_academic_years.accredited', 1)
+        ->where('institutes.code','=', 'ITE')
+        ->count();
 
+        $response = [ 
+        'funds' => $funds,
+        'institute_enrolled_1' => $institute_enrolled_1,
+        'institute_enrolled_2' => $institute_enrolled_2
+        ];
 
         return view('funds.index',$response, compact('ay','ins', 'budget', 'budget2', 'funds1sem', 'funds2sem', 'all_ac_orgs', 'io_orgs', 'co_orgs', 'cw_orgs', 
-        'isc_orgs', 'ssc_orgs','sp_orgs', 'sports_orgs', 'institute_enrolled_1' ,'institute_enrolled_2', 'total_enrollee1','total_enrollee2', 'num_org', 'count_ias_org', 'count_ibe_org'
+        'isc_orgs', 'ssc_orgs','sp_orgs', 'sports_orgs', 'total_enrollee1','total_enrollee2', 'num_org', 'count_ias_org', 'count_ibe_org'
         , 'count_ics_org', 'count_ihm_org', 'count_ite_org'));
        
     }
@@ -303,124 +323,106 @@ class FundsController extends Controller
          //return response()->json(['message'=>'Organization deleted']);
      }
      
-     public function choose_allocation($id){
-        $fund = Funds::findOrFail($id);
-
-        return view('funds.allocate');
-        
-     }
-
      public function allocate_funds(Request $request) //BUDGET ALLOCATION PROCESS
      {
         $ay_id = $request->input('ay_id'); 
         $sem = $request->input('sem');
-        $academics1sem = $request->input(); 
         
-        $funds1sem = DB::table('funds')
-        ->where('funds.ay_id', $ay_id)
-        ->where('funds.semester', 1)
+        //GET TOTAL NUMBER OF ENROLLED
+        $total_enrollee = DB::table('enrolled_academic_years')
+        ->where('ay_id',$ay_id)
+        ->where('sem',$sem)
+        ->sum('enrolled_academic_years.no_of_students');
+                
+        //GET ENROLLED LIST SEM AND YEAR
+        $enrollee = DB::table('enrolled_academic_years')
+        ->leftjoin('institutes', 'enrolled_academic_years.institute_id', '=', 'institutes.id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('sem',$sem)
         ->get();
 
-        $funds2sem = DB::table('funds') 
-        ->where('funds.ay_id', $ay_id)
-        ->where('funds.semester', 2)
+        //IF THERE ARE NO ENROLLED -> RETURN ERROR
+        if(count($enrollee) == 0){
+            return redirect()->back()->with('alert-danger', 'Sorry but there are no enrollees listed yet. Pls check the Enrolled List');
+        }
+       
+        //GET ALL ACCREDITED ORGANIZATION
+        $all_ac_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('accredited', 1)
         ->get();
-        
-                //GET TOTAL NUMBER OF ENROLLED
-                $total_enrollee = DB::table('enrolled_academic_years')
-                ->where('sem', $sem)
-                ->sum('enrolled_academic_years.no_of_students');
-                
-                //GET ENROLLED LIST PER SEM AND YEAR
-                $enrollee = DB::table('enrolled_academic_years')
-                ->leftjoin('institutes', 'enrolled_academic_years.institute_id', '=', 'institutes.id')
-                ->orderby('code')
-                ->where('ay_id',$request->input('ay_id'))
-                ->where('sem',$request->input('sem'))
-                ->get();
-       
-                //IF THERE ARE NO ENROLLED - RETURN ERROR
-                $enrollee_num = count($enrollee);
-                if($enrollee_num == 0){
-                   return redirect()->back()->with('alert-danger', 'Sorry but there are no enrollees listed yet. Pls check the Enrolled List');
-                }
-       
-               //GET ALL ACCREDITED ORGANIZATION
-               $all_ac_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET ALL INSTITUTE ORG.
-               $io_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('institute_id')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','IO')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET ALL CULTURAL ORG.
-               $co_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','CO')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET ALL COLLEGE WIDE ORG.
-               $cw_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','CW')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET ALL ISC
-               $isc_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','ISC')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET SSC
-               $ssc_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','SSC')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET EQ
-               $eq_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','SP')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET SP
-               $sp_orgs = DB::table('organizations')
-               ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-               ->orderby('code')
-               ->where('ay_id',$request->input('ay_id'))
-               ->where('type','SPORTS')
-               ->where('organization_academic_years.accredited', 1)
-               ->get();
-       
-               //GET FUNDS LIST IN THE SEM SELECTED
-                $funds_list = DB::table('funds')
-                ->where('ay_id', $request->input('ay_id'))
-                ->where('semester', $request->input('sem'))
-                ->get();
+
+        //GET ALL INSTITUTE ORG.
+        $io_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('institute_id')
+        ->where('ay_id',$ay_id)
+        ->where('type','IO')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET ALL CULTURAL ORG.
+        $co_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','CO')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET ALL COLLEGE WIDE ORG.
+        $cw_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','CW')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET ALL ISC
+        $isc_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','ISC')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET SSC
+        $ssc_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','SSC')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET EQ
+        $eq_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','SP')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET SP
+        $sp_orgs = DB::table('organizations')
+        ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
+        ->orderby('code')
+        ->where('ay_id',$ay_id)
+        ->where('type','SPORTS')
+        ->where('accredited', 1)
+        ->get();
+
+        //GET FUNDS LIST IN THE SEM SELECTED
+        $funds_list = DB::table('funds')
+        ->where('ay_id', $ay_id)
+        ->where('semester', $sem)
+        ->get();
 
         //ALLOCATION PROCESS
         foreach($funds_list as $flist){
@@ -434,12 +436,13 @@ class FundsController extends Controller
                     if($request->input('Academic-sem')==1){
                         $budget->budget =  $flist->amount/count($isc_orgs);
                     }
+                    
                     //IF OPTION IS EQUATIBLE (2)
                     else{
                         foreach($enrollee as $ie1){
                             if($isc->institute_id == $ie1->institute_id){
                                 $percent = ($ie1->no_of_students / $total_enrollee);
-                                $budget->budget =  $flist->amount*$percent;
+                                $budget->budget =  $flist->amount * $percent;
                             }
                         }
                     }
@@ -452,19 +455,11 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Academic Funds, failed to allocate!');
                     }
-                    else{
-                        $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-                        ->where('organization_ay_id', '=', $budget->organization_ay_id)
-                        ->count();
 
-                        if($check_budget > 0){
-                            return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-                        }
-                        else{
-                            $budget->save();
-                        }
+                    else{
+                       $budget->save();
                     }
                 } 
             }
@@ -483,10 +478,10 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Cultural Funds, failed to allocate!');
                     }
                     else{
-                        $budget->save();
+                       $budget->save();
                     }
                 }
                 
@@ -506,10 +501,10 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Publication Funds, failed to allocate!');
                     }
                     else{
-                        $budget->save();
+                       $budget->save();
                     }
                 }
                 
@@ -529,10 +524,10 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Sports Funds, failed to allocate!');
                     }
                     else{
-                        $budget->save();
+                       $budget->save();
                     }
                 }    
             }
@@ -551,10 +546,10 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Council Funds, failed to allocate!');
                     }
                     else{
-                        $budget->save();
+                       $budget->save();
                     }
                 }
                 foreach($isc_orgs as $isc){
@@ -584,10 +579,10 @@ class FundsController extends Controller
                     ->count();
 
                     if($check_budget > 0){
-                        return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                        return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Council Funds, failed to allocate!');
                     }
                     else{
-                        $budget->save();
+                       $budget->save();
                     }
                         }
                         
@@ -599,6 +594,7 @@ class FundsController extends Controller
 
             // STUDENT ACTIVTIES
             if($flist->name == 'Student Activity'){
+
                 //IF OPTION IS EQUAL (1)
                 if($request->input('Student_Activity-sem')==1){
                     $sa_all_orgs = count($cw_orgs)+count($io_orgs);
@@ -615,22 +611,16 @@ class FundsController extends Controller
                         ->count();
     
                         if($check_budget > 0){
-                            return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                            return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Activity Funds, failed to allocate!');
                         }
                         else{
-                            $budget->save();
+                           $budget->save();
                         }
                     }
+
                     foreach($io_orgs as $io){
                         foreach($enrollee as $e){
                             if($io->institute_id == $e->institute_id){
-                                $num_org = DB::table('organization_academic_years')
-                                ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
-                                ->orderby('institute_id')
-                                ->where('ay_id',$request->input('ay_id'))
-                                ->where('type','IO')
-                                ->where('institute_id', $e->institute_id)
-                                ->get();
                                 $budget = new Budget;
                                 $budget->budget =  $flist->amount/$sa_all_orgs;
                                 $budget->remaining = $flist->amount/$sa_all_orgs;;
@@ -638,22 +628,24 @@ class FundsController extends Controller
                                 $budget->organization_ay_id = $io->id;
                                 
                                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-                        ->where('organization_ay_id', '=', $budget->organization_ay_id)
-                        ->count();
+                                ->where('organization_ay_id', '=', $budget->organization_ay_id)
+                                ->count();
     
-                        if($check_budget > 0){
-                            return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-                        }
-                        else{
-                            $budget->save();
-                        }
+                                if($check_budget > 0){
+                                    return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Activity Funds, failed to allocate!');
+                                }
+                                else{
+                                   $budget->save();
+                                }
                             }
                         }
                     }
                     
                 }
+
                 //IF OPTION IS EQUATIBLE (2)
                 else{
+                    //ALLOCATE CW ORGS
                     foreach($cw_orgs as $cw){
                         $budget = new Budget;
                         $budget->budget =  ($flist->amount*.10)/count($cw_orgs);
@@ -666,25 +658,34 @@ class FundsController extends Controller
                         ->count();
     
                         if($check_budget > 0){
-                            return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
+                            return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Activity Funds, failed to allocate!');
                         }
                         else{
                             $budget->save();
                         }
                     }
-                    foreach($io_orgs as $io){
-                        foreach($enrollee as $e){
+
+                    //ALLOCATE IORGS
+                    foreach($enrollee as $e){
+                        foreach($io_orgs as $io){
                             if($io->institute_id == $e->institute_id){
-                                $num_org = DB::table('organization_academic_years')
+
+                                //GET ORG WHERE IT HAS THE SAME INSTITUTE ID OF THE LOOPED VAR.
+                                $current_org = DB::table('organization_academic_years')
                                 ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
-                                ->orderby('institute_id')
-                                ->where('ay_id',$request->input('ay_id'))
+                                ->where('ay_id',$ay_id)
                                 ->where('type','IO')
                                 ->where('institute_id', $e->institute_id)
+                                ->where('accredited', 1)
                                 ->get();
+
+                                $payment = DB::table('payment_amounts')
+                                ->where('name', $flist->name)
+                                ->first();
+
                                 $budget = new Budget;
-                                $budget->budget =  ((75*$e->no_of_students)*.90)/count($num_org);
-                                $budget->remaining = ((75*$e->no_of_students)*.90)/count($num_org);
+                                $budget->budget =  (($payment->amount * $e->no_of_students) * .90) / count($current_org);
+                                $budget->remaining = $budget->budget;
                                 $budget->fund_id = $flist->id;
                                 $budget->organization_ay_id = $io->id;
                                 
@@ -692,325 +693,27 @@ class FundsController extends Controller
                                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
                                 ->count();
     
-                        if($check_budget > 0){
-                            return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-                        }   
-                        else{
-                            $budget->save();
-                        }
+                                if($check_budget > 0){
+                                    return redirect()->back()->with('alert-danger', 'There is already existing allocation in Student Activity Funds, failed to allocate!');
+                                }   
+                                else{
+                                    $budget->save();
+                                }
                             }
                         }
                     }
                 }
-               
+  
             }
             
         }
-        // return response()->json($request->input());
+        
+        // dd($payment);
+        // return response()->json($budget);
         return redirect()->back()->with('alert-success', 'Allocated successfully!');
      }
 
-    //  {
-        
-        
-        
-        // //GET TOTAL NUMBER OF ENROLLED
-        //  $total_enrollee = DB::table('enrolled_academic_years')
-        //  ->sum('enrolled_academic_years.no_of_students');
-         
-        //  //GET ENROLLED LIST PER SEM AND YEAR
-        //  $enrollee = DB::table('enrolled_academic_years')
-        //  ->leftjoin('institutes', 'enrolled_academic_years.institute_id', '=', 'institutes.id')
-        //  ->orderby('code')
-        //  ->where('ay_id',$request->input('ay_id'))
-        //  ->where('sem',$request->input('sem'))
-        //  ->get();
-
-        //  //IF THERE ARE NO ENROLLED - RETURN ERROR
-        //  $enrollee_num = count($enrollee);
-        //  if($enrollee_num == 0){
-        //     return redirect()->back()->with('alert-danger', 'Sorry but there are no enrollees listed yet. Pls check the Enrolled List');
-        //  }
-
-        // //GET ALL ACCREDITED ORGANIZATION
-        // $all_ac_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET ALL INSTITUTE ORG.
-        // $io_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('institute_id')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','IO')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET ALL CULTURAL ORG.
-        // $co_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','CO')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET ALL COLLEGE WIDE ORG.
-        // $cw_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','CW')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET ALL ISC
-        // $isc_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','ISC')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET SSC
-        // $ssc_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','SSC')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET EQ
-        // $eq_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','EQ')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET SP
-        // $sp_orgs = DB::table('organizations')
-        // ->join('organization_academic_years', 'organizations.id', '=', 'organization_academic_years.organization_id')
-        // ->orderby('code')
-        // ->where('ay_id',$request->input('ay_id'))
-        // ->where('type','SP')
-        // ->where('organization_academic_years.accredited', 1)
-        // ->get();
-
-        // //GET FUNDS LIST IN THE SEM SELECTED
-        //  $funds_list = DB::table('funds')
-        //  ->where('ay_id', $request->input('ay_id'))
-        //  ->where('semester', $request->input('sem'))
-        //  ->get();
-
-
-    //      //ALLOCATION PROCESS
-    //      foreach($funds_list as $flist){
-    //         if($flist->name == 'Academic'){
-    //             foreach($isc_orgs as $isc){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  $flist->amount/count($isc_orgs);
-    //                 $budget->remaining = $flist->amount/count($isc_orgs);
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $isc->id;
-
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-                        
-    //                     $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //                 }
-                   
-    //             }
-                
-    //         }
-    //         if($flist->name == 'Cultural'){
-    //             foreach($co_orgs as $co){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  $flist->amount/count($co_orgs);
-    //                 $budget->remaining = $flist->amount/count($co_orgs);
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $co->id;
-                    
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //             }
-                
-    //         }
-    //         if($flist->name == 'Publication'){
-    //             foreach($eq_orgs as $eq){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  $flist->amount/count($eq_orgs);
-    //                 $budget->remaining = $flist->amount/count($eq_orgs);
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $eq->id;
-                    
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //             }
-                
-    //         }
-    //         if($flist->name == 'Sports'){
-    //             foreach($sp_orgs as $sp){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  $flist->amount/count($sp_orgs);
-    //                 $budget->remaining = $flist->amount/count($sp_orgs);
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $sp->id;
-                    
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //             }
-                
-    //         }
-    //         if($flist->name == 'Student Council'){
-    //             foreach($ssc_orgs as $ssc){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  $flist->amount/2;
-    //                 $budget->remaining = $flist->amount/2;
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $ssc->id;
-                    
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //             }
-    //             foreach($isc_orgs as $isc){
-    //                 foreach($enrollee as $e){
-    //                     if($isc->institute_id == $e->institute_id){
-    //                         $budget = new Budget;
-    //                         $budget->budget =  75*$e->no_of_students;
-    //                         $budget->remaining = 75*$e->no_of_students;
-    //                         $budget->fund_id = $flist->id;
-    //                         $budget->organization_ay_id = $isc->id;
-                            
-    //                         $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //                     }
-                        
-    //                 }
-                   
-    //             }
-                
-    //         }
-    //         if($flist->name == 'Student Activity'){
-    //             foreach($cw_orgs as $cw){
-    //                 $budget = new Budget;
-    //                 $budget->budget =  ($flist->amount*.10)/count($cw_orgs);
-    //                 $budget->remaining = ($flist->amount*.10)/count($cw_orgs);
-    //                 $budget->fund_id = $flist->id;
-    //                 $budget->organization_ay_id = $cw->id;
-                    
-    //                 $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //             }
-    //             foreach($io_orgs as $io){
-    //                 foreach($enrollee as $e){
-    //                     if($io->institute_id == $e->institute_id){
-    //                         $num_org = DB::table('organization_academic_years')
-    //                         ->join('organizations', 'organization_academic_years.organization_id', '=', 'organizations.id')
-    //                         ->orderby('institute_id')
-    //                         ->where('ay_id',$request->input('ay_id'))
-    //                         ->where('type','IO')
-    //                         ->where('institute_id', $e->institute_id)
-    //                         ->get();
-    //                         $budget = new Budget;
-    //                         $budget->budget =  ((75*$e->no_of_students)*.90)/count($num_org);
-    //                         $budget->remaining = ((75*$e->no_of_students)*.90)/count($num_org);
-    //                         $budget->fund_id = $flist->id;
-    //                         $budget->organization_ay_id = $io->id;
-                            
-    //                         $check_budget = Budget::where('fund_id', '=', $budget->fund_id)
-    //                 ->where('organization_ay_id', '=', $budget->organization_ay_id)
-    //                 ->count();
-
-    //                 if($check_budget > 0){
-    //                     return redirect()->back()->with('alert-danger', 'There is already existing data, failed to allocate!');
-    //                 }
-    //                 else{
-    //                     $budget->save();
-    //                 }
-    //                     }
-    //                 }
-    //             }
-                
-    //         }
-            
-    //      }
-         
- 
-    //     // return response()->json($funds_list);
- 
-    //     return redirect()->back()->with('alert-success', 'Allocated successfully!');
-    //     // return view('funds.index', $response, compact('ay'))->with('alert.success', 'Data has been saved');}
-
+   
 
      
 

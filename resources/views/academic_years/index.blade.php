@@ -8,7 +8,7 @@
                 $add_year = $years->ay_to + 1;
             ?>
             <li>
-                <form action="{{route('academic_year.add_year')}}" method="POST">      
+                <form action="{{route('academic_years.add_year')}}" method="POST">      
                     <input type="hidden" name="_method" value="post">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"> 
                     <input type="hidden" name="next_yr" value="{{$next_yr}}">

@@ -183,12 +183,12 @@ class OrganizationAcademicYearController extends Controller
                     }
                 else
                     {
-                        return redirect()->back()->with('alert-danger', 'Failed to accredit an Organization. Please check the list in the table and/or click the Refresh List and/or select an Organization in the list to be accredited.');
+                        return redirect()->back()->with('alert-danger', 'Failed to accredit an Organization. Please check the list in the table and/or select an Organization in the list to be accredited.');
                     }
             }
         else
             {
-                return redirect()->back()->with('alert-danger', 'Failed to accredit an Organization. Please check the list in the table and/or click the Refresh List and/or select an Organization in the list to be accredited.');
+                return redirect()->back()->with('alert-danger', 'Failed to accredit an Organization. Please check the list in the table and/or select an Organization in the list to be accredited.');
             }
        //return response()->json($accredited);
     }

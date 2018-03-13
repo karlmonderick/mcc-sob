@@ -14,41 +14,46 @@
 
 	<!-- START WIDGETS -->                    
 	<div class="row">
+
 		<div class="col-md-3">
-			
 			<!-- START WIDGET SLIDER -->
-			<div class="widget widget-default widget-carousel">
+			<div class="widget widget-success widget-carousel">
 				<div class="owl-carousel" id="owl-example">
-					@if($auth->role_id == 1 || $auth->role_id == 2 || $auth->role_id == 3 )      
-					<div>                             
-						<div class="widget-title">Student Funds {{ $date->year }} </div>                                                                        
-						<div class="widget-subtitle">1st Semester</div>
-						<div class="widget-int">{{number_format($tc1)}}</div>
-					</div>
-					@if($tc2 != NULL)
+					<!-- IF ADMIN SEE ALL BUDGET -->
+					@if($auth->role_id == 1 || $auth->role_id == 2 || $auth->role_id == 3 )   
 						<div>                             
 							<div class="widget-title">Student Funds {{ $date->year }} </div>                                                                        
-							<div class="widget-subtitle">2nd Semester</div>
-							<div class="widget-int">{{number_format($tc2)}}</div>
+							<div class="widget-subtitle">1st Semester</div>
+							<div class="widget-int">₱ {{number_format($tc1)}}</div>
 						</div>
-					@endif
-					<div>                             
-						<div class="widget-title">Student Funds {{ $date->year }} </div>                                                                        
-						<div class="widget-subtitle">Total</div>
-						<div class="widget-int">{{number_format($total_collection)}}</div>
-					</div>
 
+						<!-- SHOW IF SECOND SEM FUNDS HAS VALUE -->
+						@if($tc2 != NULL)
+							<div>                             
+								<div class="widget-title">Student Funds {{ $date->year }} </div>                                                                        
+								<div class="widget-subtitle">2nd Semester</div>
+								<div class="widget-int">₱ {{number_format($tc2)}}</div>
+							</div>
+						@endif
+						<div>                             
+							<div class="widget-title">Student Funds {{ $date->year }} </div>                                                                        
+							<div class="widget-subtitle">Total</div>
+							<div class="widget-int">₱ {{number_format($total_collection)}}</div>
+						</div>
+					<!-- IF USER IS STUDENT -->
 					@elseif(Auth::user()->role_id == 4)
-					<div>                
-						<div class="widget-title">Budget {{ $date->year }} </div>                                                                        
-						<div class="widget-subtitle">1st Semester</div>
-						<div class="widget-int">
-							@if($budget_first != NULL)
-							₱ {{number_format($budget_first->budget)}}
-							@else 
-							₱ 0
-							@endif</div>
-					</div>
+						<div>                
+							<div class="widget-title">Budget {{ $date->year }} </div>                                                                        
+							<div class="widget-subtitle">1st Semester</div>
+							<div class="widget-int">
+								@if($budget_first != NULL)
+								₱ {{number_format($budget_first->budget)}}
+								@else 
+								₱ 0
+								@endif
+							</div>
+						</div>
+						<!-- SHOW IF SECOND SEM BUDGET HAS VALUE -->
 						@if($budget_second != NULL)
 						<div>                                    
 							<div class="widget-title">Budget {{ $date->year }} </div>                                                                        
@@ -71,8 +76,8 @@
 		
 		<div class="col-md-3">
 			
-			<!-- START WIDGET MESSAGES -->
-			<div class="widget widget-default widget-item-icon">
+			<!-- START WIDGET REQUESTS -->
+			<div class="widget widget-info widget-item-icon">
 				<div class="widget-item-left">
 					<span class="fa fa-envelope"></span>
 				</div>                             
@@ -83,7 +88,6 @@
 						@if(Auth::user()->role_id == 2){{ $all_requests }} @endif
 						@if(Auth::user()->role_id == 1){{ $a_approval2 }} @endif
 						@if(Auth::user()->role_id == 4 ){{ $org_num_requests }} @endif
-
 					</div>
 					@if($auth->role_id == 3)      
 					<div class="widget-title">New requests</div>
@@ -100,21 +104,21 @@
 				</div>
 			</div>                            
 			<!-- END WIDGET MESSAGES -->
-			
 		</div>
 
 		<div class="col-md-3">
-			
-			<!-- START WIDGET REGISTRED -->
-			<div class="widget widget-default widget-item-icon">
+			<!-- START WIDGET ORG INFO -->
+			<div class="widget widget-warning widget-item-icon">
 				<div class="widget-item-left">
 					<span class="fa fa-user"></span>
 				</div>
 				<div class="widget-data">
+					<!-- SHOW ACCREDITED ORGS IF... -->
 					@if($auth->role_id == 1 || $auth->role_id == 3 || $auth->role_id == 2)      
 						<div class="widget-int num-count">{{$organization_num}}</div>
 						<div class="widget-title">Accredited Organization</div>
 						<div class="widget-subtitle">for {{$date->year}}</div>
+					<!-- SHOW MEMBER COUNT -->
 					@elseif(Auth::user()->role_id == 4)
 						<div class="widget-int num-count">{{ $org_officer_num }}</div>
 						<div class="widget-title">Officers</div>
@@ -130,22 +134,22 @@
 		<div class="col-md-3">
 			
 			<!-- START WIDGET CLOCK -->
-			<div class="widget widget-info widget-padding-sm">
+			<div class="widget widget-danger widget-padding-sm">
 				<div class="widget-big-int plugin-clock">00:00</div>                            
 				<div class="widget-subtitle plugin-date">Loading...</div>
 				<div class="widget-controls">                                
 					
 				</div>                            
 				<div class="widget-buttons widget-c3">
-				<!-- 	<div class="col">
-						<a href="#"><span class="fa fa-clock-o"></span></a>
+					<div class="col">
+						<a href="#"><span class="fa fa-user"></span></a>
 					</div>
 					<div class="col">
-						<a href="#"><span class="fa fa-bell"></span></a>
+						<a href="#"><span class="fa fa-building"></span></a>
 					</div>
 					<div class="col">
-						<a href="#"><span class="fa fa-calendar"></span></a>
-					</div> -->
+						<a href="#"><span class="fa fa-dashboard"></span></a>
+					</div>
 				</div>                            
 			</div>                        
 			<!-- END WIDGET CLOCK -->
@@ -176,47 +180,46 @@
 									<tr>
 										<th>#</th>
 										<th>Funds Name</th>
-										<th>Semester</th>
+										<th>Remaining</th>
 										<th>Usage</th>
 
 									</tr>
 								</thead>
 								<tbody>
 								<?php $i=1; ?>
-									@foreach($funds1 as $funds1)
+									@foreach($funds1 as $funds1_table)
 									<tr>
 										<td>{{ $i++ }}</td>
-										<td>{{ $funds1->name }}</td>
+										<td>{{ $funds1_table->name }}</td>
 										<td>
-											@if($funds1->semester == 1)
-												1st
-											@else
-												2nd
-											@endif
+											₱ {{ number_format($funds1_table->remaining) }}
 										</td>
 										<td>
 											<?php
-												if($funds1->remaining>0 && $funds1->amount>0){
-													$percent = ($funds1->remaining/$funds1->amount)*100;
+												if($funds1_table->remaining>0 && $funds1_table->amount>0){
+													$percent = ($funds1_table->remaining/$funds1_table->amount)*100;
 													$usage = 100 - $percent;
 												}
 												else{
-													$usage = 0 ;
+													$usage = 100 ;
 												}
 
-											if($usage<100)
+												if($usage<100)
 												{ ?>	
-											<div class="progress  progress-striped active">
-												<div class="progress-bar @if($usage>=75&&$usage<100) progress-bar-danger @else progress-bar-success @endif" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {{$usage}}%;"></div>
-											</div>
-											<?php } else { ?>
-											<span class="label label-danger">No more Funds!</span>	
+												<div class="progress  progress-striped active">
+													<div class="progress-bar @if($usage>=75&&$usage<100) progress-bar-danger @else progress-bar-success @endif" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {{$usage}}%;">
+														{{ number_format($usage, 3)}}%
+													</div>
+												</div>
+												<?php } else { ?>
+												<span class="label label-danger">No more Funds!</span>	
 											<?php } ?>
 										</td>
 									</tr>
 									@endforeach
 								</tbody>
 							</table>
+							
 						</div>
 						<div class="tab-pane" id="tab9">
 							<table width="100%" class="table table-striped table-bordered table-hover2 datatable">
@@ -224,36 +227,39 @@
 									<tr>
 										<th>#</th>
 										<th>Funds Name</th>
-										<th>Semester</th>
+										<th>Remaining</th>
 										<th>Usage</th>
 
 									</tr>
 								</thead>
 								<tbody>
 								<?php $i=1; ?>
-								@foreach($funds2 as $funds2)
+								@foreach($funds2 as $funds2_table)
 									<tr>
 										<td>{{ $i++ }}</td>
-										<td>{{ $funds2->name }}</td>
+										<td>{{ $funds2_table->name }}</td>
 										<td>
-											@if($funds2->semester == 1)
-												1st
-											@else
-												2nd
-											@endif
+											₱ {{ number_format($funds2_table->remaining) }}
 										</td>
 										<td>
 											<?php
-												$percent = ($funds2->remaining/$funds2->amount)*100;
-												$usage = 100 - $percent;
+												if($funds2_table->remaining>0 && $funds2_table->amount>0){
+													$percent2 = ($funds2_table->remaining/$funds2_table->amount)*100;
+													$usage2 = 100 - $percent2;
+												}
+												else{
+													$usage2 = 100 ;
+												}
 
-											if($usage<100)
+												if($usage2<100)
 												{ ?>	
-											<div class="progress progress-striped active">
-												<div class="progress-bar @if($usage>=75&&$usage<100) progress-bar-danger @else progress-bar-success @endif" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {{$usage}}%;"></div>
-											</div>
-											<?php } else { ?>
-											<span class="label label-danger">No more Funds!</span>	
+												<div class="progress  progress-striped active">
+													<div class="progress-bar @if($usage2>=75&&$usage2<100) progress-bar-danger @else progress-bar-success @endif" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {{$usage2}}%;">
+														{{ number_format($usage2, 3)}}%
+													</div>
+												</div>
+												<?php } else { ?>
+												<span class="label label-danger">No more Funds!</span>	
 											<?php } ?>
 										</td>
 									</tr>
@@ -441,6 +447,67 @@
 				</div>
 				<!-- /.panel -->
 			</div>
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Organizations Per Institute
+					</div>
+					<!-- /.panel-heading -->
+					<div class="panel-body">
+						<script type="text/javascript">
+							google.charts.load('current', {'packages':['corechart', 'bar']});
+							google.charts.setOnLoadCallback(drawChart);
+													
+							function drawChart() {
+
+								var data = google.visualization.arrayToDataTable([
+								['Task', 'Funds'],
+								@foreach($funds1 as $funds1_chart)
+									['{{$funds1_chart->name}}', {{$funds1_chart->amount}}],
+								@endforeach
+								]);
+
+								var options = {
+									'width': 500,
+									'height': 300,
+								};
+
+								var chart = new google.visualization.ColumnChart(document.getElementById('barchart-funds'));
+
+								chart.draw(data, options);
+							}
+						</script>
+
+						<script type="text/javascript">
+							google.charts.setOnLoadCallback(drawChart2);
+													
+							function drawChart2() {
+
+								var data2 = google.visualization.arrayToDataTable([
+								['Task', 'Funds'],
+								@foreach($funds2 as $funds2_chart)
+									['{{$funds2_chart->name}}', {{$funds2_chart->amount}}],
+								@endforeach
+								]);
+
+								var options = {
+									'width': 500,
+									'height': 300,
+								};
+
+								var chart = new google.visualization.ColumnChart(document.getElementById('barchart-funds2'));
+
+								chart.draw(data2, options);
+							}
+						</script>
+
+						<div id="barchart-funds2" style="overflow:hidden"></div>
+
+					</div>
+					<!-- /.panel-body -->
+				</div>
+				<!-- /.panel -->
+			</div>
 
 
 
@@ -620,6 +687,7 @@
 			</div>
 			
 		@endif
+
 				
 
 
