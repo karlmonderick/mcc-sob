@@ -35,7 +35,7 @@
 						</button>
 						<hr>
 						<ul class="list-group border-bottom">
-							<li class="list-group-item active">
+							<li class="list-group-item">
 								1st Semester:<span class="badge badge-danger"> {{$enrolled1->count()}} </span>
 							</li>
 							<?php $i = 1; ?>
@@ -52,7 +52,7 @@
 						</ul>       
 						<hr>
 						<ul class="list-group border-bottom">
-							<li class="list-group-item active">
+							<li class="list-group-item">
 								2nd Semester:<span class="badge badge-danger"> {{$enrolled2->count()}} </span>
 							</li>
 							<?php $i = 1; ?>

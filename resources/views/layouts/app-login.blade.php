@@ -13,8 +13,22 @@
     <!-- CSS INCLUDE -->        
     <link rel="stylesheet" type="text/css" id="theme" href="{{ asset('css/theme-default.css') }}"/>
         <!-- EOF CSS INCLUDE -->
+    <style>
+        #bg { 
+        /* The image used */
+        background-image: url("../img/backgrounds/wall_1.jpg");
+
+        /* Full height */
+        height: 100%; 
+
+        /* Center and scale the image nicely */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        }
+    </style>
 </head>
-<body>
+<body id="bg">
     <div id="app">
         
         <div class="login-container lightmode">

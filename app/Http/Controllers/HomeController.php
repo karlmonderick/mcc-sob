@@ -66,6 +66,7 @@ class HomeController extends Controller
         }
         else
         {
+            $current_ay = 0;
            $organization_num = 0; 
         }
 

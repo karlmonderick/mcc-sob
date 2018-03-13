@@ -3,16 +3,33 @@
         <!-- Add a new year - SAS DIRECTOR ONLY -->
         @if(Auth::user()->role_id == 3)
             <?php 
-                $year = date('Y') + 1;
-                $count_year = count($years->ay_to);
-                $add_year = $years->ay_to + 1;
+                $year = date('Y');
+                if(count($years)>0){
+                    $count_year = count($years);
+                    $add_year = $years->ay_to + 1;
+                }
+                else{
+                    $count_year = 0;
+                    $add_year = $year + 1;
+                }
             ?>
             <li>
                 <form action="{{route('academic_years.add_year')}}" method="POST">      
                     <input type="hidden" name="_method" value="post">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"> 
                     <input type="hidden" name="next_yr" value="{{$next_yr}}">
-                    <button type="submit" class="btn btn-success btn-block" data-toggle="tooltip" data-placement="right" title="Add a A.Y. <?php if($count_year != 0){ echo $years->ay_to; echo '-'; echo $add_year; } else {echo date('Y'); echo '-'; echo $year;} ?> " onclick="return confirm('Are you sure you want to add A.Y. <?php if($count_year != 0){ echo $years->ay_to; echo '-'; echo $add_year; } else {echo date('Y'); echo '-'; echo $year;} ?>?')">
+                    <button type="submit" class="btn btn-success btn-block" data-toggle="tooltip" data-placement="right" title="Add a A.Y. 
+                        <?php 
+                            if($count_year != 0){ 
+                                echo $years->ay_to; echo '-';
+                                echo $add_year; 
+                            } 
+                            else {
+                                echo date('Y'); 
+                                echo '-'; 
+                                echo $add_year;
+                            } 
+                        ?> " onclick="return confirm('Are you sure you want to add A.Y. <?php if($count_year != 0){ echo $years->ay_to; echo '-'; echo $add_year; } else {echo date('Y'); echo '-'; echo $add_year;} ?> ?')">
                         <small><i class="fa fa-plus"></i></small>
                         <i class="fa fa-calendar-o"></i>
                     </button>

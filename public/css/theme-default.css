@@ -3871,7 +3871,7 @@ background: #1caf9a !important;
   float: left;
   width: 100%;
   min-height: 100%;
-  background: url("../img/bg.png") left top repeat #1b1e24;
+  /* background: url("../img/bg.png") left top repeat #1b1e24; */
 }
 .login-container .login-box {
   width: 400px;
@@ -3963,8 +3963,8 @@ background: #1caf9a !important;
   color: #FFF;
 }
 .login-container.lightmode {
-  background: url("../img/backgrounds/wall_1.jpg") left top no-repeat;
-  height: 677px;
+  /* background: url("../img/backgrounds/wall_1.jpg") left top no-repeat; */
+  /* height: 677px; */
   overflow: hidden;
 }
 .login-container.lightmode .login-box .login-body {
